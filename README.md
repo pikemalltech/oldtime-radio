@@ -119,3 +119,11 @@ Always check each item's license.
 
 The site is static; `docs/` is the whole thing. In the repository's Settings → Pages, set *Deploy from a branch*, branch `main`, folder `/docs`.
 Any push to `main` then republishes it. Opening `docs/index.html` straight from disk also works.
+
+## License
+
+The code in this repository is released under the [MIT License](LICENSE).
+
+The radio programmes and readings are **not** part of this repository and are not covered by that license. They are streamed
+directly from the Internet Archive and remain under their own terms (many Old Time Radio Researchers files are CC BY-NC-ND,
+LibriVox recordings are public domain). Keep the site non-commercial and keep the per-programme "source" links.
