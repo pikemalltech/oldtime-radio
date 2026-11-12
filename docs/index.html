@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Hearthside Hour — Old Time Radio</title>
+<meta name="description" content="Sit down by the radio and tune in to old-time radio stations — mystery, sci-fi, crime, comedy and more — streamed from the Internet Archive.">
+<meta name="theme-color" content="#1a110b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23201208'/%3E%3Crect x='8' y='18' width='48' height='30' rx='6' fill='%238a5129'/%3E%3Crect x='13' y='23' width='24' height='14' rx='3' fill='%23f2c46d'/%3E%3Ccircle cx='46' cy='30' r='5' fill='%231a0e07'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="seasons.css">
+<script src="seasons.js"></script>
+</head>
+<body class="off">
+
+<div id="stage" aria-label="A living room with a 1940s radio">
+
+  <!-- ===== the room ===== -->
+  <div class="wall"></div>
+  <div class="floor"></div>
+  <div class="wainscot"><span class="rail"></span></div>
+  <div class="baseboard"></div>
+  <div class="rug"></div>
+
+  <!-- seasonal strings of lights, bunting and cobwebs (see seasons.js / seasons.css) -->
+  <div class="garland" aria-hidden="true"></div>
+  <div class="lights" aria-hidden="true"></div>
+  <div class="cobweb l" aria-hidden="true"></div><div class="cobweb r" aria-hidden="true"></div><i class="spider" aria-hidden="true"></i>
+
+  <div class="anchor"><!-- everything below is positioned from the base of the sideboard, centre -->
+
+    <div class="window wide-only" aria-hidden="true">
+      <div class="sky">
+        <i class="moon"></i><div class="ground"></div>
+        <div class="fx fx-snow"></div><div class="fx fx-leaves"></div><div class="fx fx-petals"></div><div class="fx fx-fireflies"></div>
+        <div class="fx fx-bats"><i></i><i></i><i></i></div>
+        <div class="fx fx-fireworks"><i class="fw a"></i><i class="fw b"></i><i class="fw c"></i></div>
+        <div class="fx fx-hearts"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="mullion v"></div><div class="mullion h"></div>
+      <div class="curtain l"></div><div class="curtain r"></div>
+      <div class="valance"></div>
+    </div>
+
+    <div class="frames wide-only" aria-hidden="true">
+      <div class="frame f1"><i></i></div>
+      <div class="frame f2"><i></i></div>
+      <div class="frame f3"><i></i></div>
+    </div>
+
+    <div class="wreath wide-only" aria-hidden="true"><i class="bow"></i></div>
+
+    <div class="credenza" aria-hidden="true">
+      <div class="top"></div>
+      <div class="drawer d1"></div><div class="drawer d2"></div><div class="drawer d3"></div>
+      <div class="door l"></div><div class="door r"></div>
+      <i class="leg a"></i><i class="leg b"></i>
+    </div>
+
+    <!-- seasonal props on the sideboard (shown by theme) -->
+    <div class="prop pL bouquet" aria-hidden="true"><i class="vase"></i><i class="stem s1"></i><i class="stem s2"></i><i class="stem s3"></i><i class="bloom b1"></i><i class="bloom b2"></i><i class="bloom b3"></i></div>
+    <div class="prop pL pumpkins" aria-hidden="true"><i class="pk big"></i><i class="pk small"></i><i class="gourd"></i></div>
+    <div class="prop pL jack" aria-hidden="true"><i></i></div>
+    <div class="prop pL mug" aria-hidden="true"><i class="cup"></i><i class="steam s1"></i><i class="steam s2"></i></div>
+    <div class="prop pL tree" aria-hidden="true"><i class="trunk"></i><i class="t1"></i><i class="t2"></i><i class="t3"></i><i class="bulbs"></i><i class="star"></i></div>
+    <div class="prop pL flag" aria-hidden="true"><i class="pole"></i><i class="cloth"></i></div>
+    <div class="prop pR candle" aria-hidden="true"><i class="wax"></i><i class="flame"></i></div>
+    <div class="prop pR gifts" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+    <div class="prop pR plant" aria-hidden="true"><i class="pot"></i><i class="leaf l1"></i><i class="leaf l2"></i><i class="leaf l3"></i></div>
+    <div class="prop pR chocs" aria-hidden="true"><i class="box"></i></div>
+
+    <!-- table lamp -->
+    <div class="lamp" aria-hidden="true">
+      <div class="shade"></div><i class="stem"></i><i class="foot"></i>
+    </div>
+
+    <!-- ===== the radio ===== -->
+    <div class="radio" id="radio">
+      <div class="cabinet"></div>
+      <div class="inlay"></div>
+      <div class="brand">HEARTHSIDE<small>★ SUPERHETERODYNE ★</small></div>
+      <i class="pilot" id="pilot" title="Power lamp"></i>
+
+      <div class="dial" id="dial" aria-label="Tuning dial">
+        <div class="dial-lit"></div>
+        <div class="dial-scale" id="dialScale"></div>
+        <div class="dial-needle" id="needle"></div>
+        <div class="dial-strip" id="strip">
+          <span class="strip-a" id="stripA"></span>
+          <span class="strip-b" id="stripB"></span>
+        </div>
+        <div class="dial-glass"></div>
+      </div>
+
+      <div class="eye" aria-hidden="true">
+        <svg viewBox="-34 -34 68 68" width="100%" height="100%">
+          <defs>
+            <radialGradient id="eyeg" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#e8ffc7"/>
+              <stop offset=".35" stop-color="#7dff8f"/>
+              <stop offset=".8" stop-color="#18a043"/>
+              <stop offset="1" stop-color="#06501f"/>
+            </radialGradient>
+          </defs>
+          <circle r="31" fill="#0b0805" stroke="#b8903f" stroke-width="3"/>
+          <circle r="26" fill="url(#eyeg)" id="eyeGlass"/>
+          <path id="eyeShadow" d="" fill="#0a1a0b" opacity=".92"/>
+          <circle r="5" fill="#0b0805"/>
+          <ellipse cx="-9" cy="-14" rx="11" ry="5" fill="#fff" opacity=".14" transform="rotate(-25)"/>
+        </svg>
+      </div>
+
+      <!-- knobs -->
+      <div class="knob-wrap kw-power">
+        <button class="knob" id="knobPower" aria-label="Power" aria-pressed="false"><span class="cap"></span></button>
+        <label>POWER</label>
+      </div>
+      <div class="knob-wrap kw-vol">
+        <button class="knob" id="knobVol" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70"><span class="cap"></span></button>
+        <label>VOLUME</label>
+      </div>
+      <div class="knob-wrap kw-tune">
+        <button class="knob big" id="knobTune" role="slider" aria-label="Tuning" aria-valuemin="540" aria-valuemax="1600" aria-valuenow="640"><span class="cap"></span></button>
+        <label>TUNING</label>
+      </div>
+
+      <div class="grille">
+        <div class="cloth"></div>
+        <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="base"></div>
+    </div>
+
+    <!-- the Radio Guide magazine, leaning on the radio -->
+    <button class="magazine" id="magazine" aria-label="Open the Radio Guide: tonight's listings">
+      <span class="mast">RADIO<br>GUIDE</span>
+      <span class="art"><i class="mic"></i><i class="waves"></i></span>
+      <span class="tag">TONIGHT'S<br>PROGRAMS</span>
+      <span class="price">10¢</span>
+    </button>
+    <span class="mag-hint" id="magHint">Today's listings ↓</span>
+  </div>
+
+  <!-- armchairs, foreground -->
+  <div class="chair left wide-only" aria-hidden="true"><i class="back"></i><i class="wing a"></i><i class="wing b"></i><i class="arm"></i><i class="doily"></i></div>
+  <div class="chair right wide-only" aria-hidden="true"><i class="back"></i><i class="wing a"></i><i class="wing b"></i><i class="arm"></i><i class="doily"></i></div>
+
+  <div class="shade-room"></div>
+  <div class="glow" id="glow"></div>
+</div>
+
+<!-- ===== control bar (accessible, mobile friendly) ===== -->
+<div class="hud" id="hud">
+  <button class="hbtn" id="prevBtn" aria-label="Previous station">◀</button>
+  <div class="hstation" id="hStation" aria-live="polite">
+    <span class="hname" id="hName">Radio off</span>
+    <span class="hnow" id="hNow">Click the POWER knob to switch on</span>
+  </div>
+  <button class="hbtn" id="nextBtn" aria-label="Next station">▶</button>
+  <span class="hbreak"></span>
+  <button class="hbtn wide" id="powerBtn" aria-pressed="false">⏻ <span>Power</span></button>
+  <button class="hbtn wide" id="sleepBtn" aria-pressed="false" title="Sleep timer">🌙 <span>Sleep</span></button>
+  <button class="hbtn wide" id="zoomBtn" aria-pressed="false" title="Zoom in on the dial and knobs (Z)">🔍 <span>Lean in</span></button>
+  <button class="hbtn wide" id="shareBtn" title="Copy a link to this station">🔗 <span>Share</span></button>
+  <label class="hvol"><span class="sr">Volume</span>🔈<input id="volRange" type="range" min="0" max="100" value="70"></label>
+  <button class="hbtn wide" id="guideBtn">📖 <span>Guide</span></button>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ===== the Radio Guide ===== -->
+<div class="guide-back" id="guide" hidden>
+  <section class="paper" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <button class="close" id="guideClose" aria-label="Close the guide">✕</button>
+    <header>
+      <p class="kicker">Your complete listing of tonight's programs</p>
+      <h2 id="guideTitle">RADIO GUIDE</h2>
+      <p class="sub"><span id="guideClock"></span> &nbsp;·&nbsp; Tap a station to tune in</p>
+    </header>
+    <div class="specials" id="guideSpecials" hidden></div>
+    <div class="rows" id="guideRows"></div>
+    <footer>
+      <p>Every program is streamed directly from the <a href="https://archive.org/details/oldtimeradio" target="_blank" rel="noopener">Internet Archive's Old Time Radio</a> collection, largely thanks to the volunteers of the Old Time Radio Researchers group. Each station follows the clock, so everyone listening hears the same show at the same moment. Many recordings are shared under Creative Commons non-commercial terms. Follow a program's link to see its source and license.</p>
+    </footer>
+  </section>
+</div>
+
+<noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;color:#eee">The radio needs JavaScript to play.</p></noscript>
+<audio id="player" preload="none"></audio>
+<script src="channels.js"></script>
+<script src="app.js" defer></script>
+</body>
+</html>

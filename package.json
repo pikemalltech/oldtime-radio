@@ -1,0 +1,11 @@
+{
+  "name": "oldtime-radio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A 1940s living-room radio that tunes into old-time radio stations streamed from the Internet Archive.",
+  "scripts": {
+    "build:data": "node scripts/build-channels.mjs",
+    "serve": "python3 -m http.server 8080 --directory docs"
+  }
+}
