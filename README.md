@@ -3,7 +3,7 @@
 **Tune in to yesterday.**
 
 Yesterdial is a 1940s console radio, in a living room, that tunes into old-time radio stations streamed
-straight from the [Internet Archive](https://archive.org/details/oldtimeradio). Live at https://pikemalltech.github.io/oldtime-radio/ (planned home: yesterdial.com).
+straight from the [Internet Archive](https://archive.org/details/oldtimeradio). Live at **https://yesterdial.com** (the old https://pikemalltech.github.io/oldtime-radio/ address redirects there).
 
 **Just double-click `docs/index.html`** (or serve `docs/` with any static server).
 
@@ -129,7 +129,9 @@ Always check each item's license.
   non-commercial and keep the per-programme "source" links. Check any series you add.
 * Fonts (Limelight, Old Standard TT, Special Elite) load from Google Fonts and degrade gracefully to serif.
 
-## Using your own domain (yesterdial.com)
+## Using your own domain (set up for yesterdial.com)
+
+This is already done for yesterdial.com (Namecheap DNS pointing at GitHub Pages, custom domain set in Settings → Pages, `docs/CNAME` committed). The steps are kept here for reference or for a different domain.
 
 1. **Register the domain.** Don't change anything in the repo yet: adding a `CNAME` before the domain exists makes GitHub redirect the working
    `github.io` address to a domain that doesn't resolve, so the site goes dark.
