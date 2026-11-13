@@ -390,7 +390,7 @@ function refreshInfo() {
       lk.href = detailsURL(link); lk.target = '_blank'; lk.rel = 'noopener';
       hNow.append(lk);
     }
-    document.title = state.on && state.tuned !== null ? `${a.replace('★ ', '')} — Yesterdial` : 'Yesterdial: Tune In to Yesterday | Old-Time Radio';
+    document.title = state.on && state.tuned !== null ? `${a.replace('★ ', '')} — Yesterdial` : 'Yesterdial: Tune In To Yesterday | Old-Time Radio';
     $('#powerBtn').setAttribute('aria-pressed', state.on);
     knobPower.setAttribute('aria-pressed', state.on);
   }
