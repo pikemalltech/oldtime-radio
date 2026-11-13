@@ -30,6 +30,20 @@ const SHOWS = {
   OTRR_Whistler_Singles: 'The Whistler',
   OTRR_Mysterious_Traveler_Singles: 'The Mysterious Traveler',
   [SHADOW]: 'The Shadow',
+  'cbsrmt-74-02-08-33-conspiracy-to-defraud': 'CBS Radio Mystery Theater',
+  OTRR_Have_Gun_Singles: 'Have Gun, Will Travel',
+  TheAdventuresOfSuperman_201805: 'The Adventures of Superman',
+  NightBeataccurate: 'Night Beat',
+  Mindwebs_230: 'Mindwebs',
+  'price-of-fearUPGRADES': 'The Price of Fear',
+  CBC_NightfallOTR: 'Nightfall',
+  TheSaintVincentPriceOTR: 'The Saint',
+  The_Bob_Hope_Program: 'The Bob Hope Show',
+  // Ray Bradbury: radio adaptations of his stories (Bradbury_On_Radio names the original series in each file name)
+  Bradbury_On_Radio: 'Ray Bradbury on Radio',
+  RayBradbury_TalesBizarre: 'Ray Bradbury’s Tales of the Bizarre',
+  '09-bradbury-13-the-man': 'Bradbury 13',
+  BBC_Bradbury: 'Ray Bradbury on BBC Radio',
   OTRR_X_Minus_One_Singles: 'X Minus One',
   OTRR_Dimension_X_Singles: 'Dimension X',
   OTRR_Dark_Fantasy_Singles: 'Dark Fantasy',
@@ -112,6 +126,13 @@ const SHOWS = {
 const LV = { min: 120, max: 90 * 60, note: 'LibriVox', noYear: true };
 const OPTS = {
   [SHADOW]: { exclude: /LP Record|Documentary|Radio Documentary/i },       // the item also holds an LP and a 1985 documentary
+  // ordered + run: a Superman story is a serial of 15-minute chapters, so take a few consecutive chapters (random start, fixed per build)
+  TheAdventuresOfSuperman_201805: { ordered: true, run: 16, runStart: /(?:Part|Pt)\s*0?1\b/i },
+  'price-of-fearUPGRADES': { note: 'BBC' },
+  Bradbury_On_Radio: { showRe: /^\d{4}-\d{2}-\d{2} (.+?) - /, note: 'Bradbury', exclude: /interview|speech|reads |lecture|discussion|panel|conversation|talks? /i },
+  RayBradbury_TalesBizarre: { note: 'BBC' },
+  '09-bradbury-13-the-man': { note: 'NPR' },
+  BBC_Bradbury: { max: 90 * 60, note: 'BBC' },
   hound_baskervilles_librivox: { ...LV, ordered: true },
   grimms_english_librivox: { ...LV, max: 30 * 60 },
   andersens_fairytales_librivox: { ...LV, max: 40 * 60 },
@@ -137,7 +158,7 @@ function tidyTitle(t) {
   if (t === t.toUpperCase() && /[A-Z]/.test(t)) {                    // ALL CAPS chapter headings
     t = t.toLowerCase().split(' ').map((w, i) => (i && SMALL.has(w) ? w : w.replace(/(^|-)[a-z]/g, (c) => c.toUpperCase()))).join(' ');
   }
-  t = t.replace(/^Introduct Ion$/i, 'Introduction');
+  t = t.replace(/\s*\((?:dramati[sz]ed|adapted|adapt|adpt|read|abridged|adaptation)[^)]*\)\s*$/i, '').replace(/^Introduct Ion$/i, 'Introduction').replace(/\s+#\d+$/, '');
   const fables = t.match(/^Fables? [\d-]+:\s*(.+)$/);                // "Fables 93-96: A; B; C; D" -> "A, and 3 more fables"
   if (fables) { const list = fables[1].split(';').map((x) => x.trim()); t = list[0] + (list.length > 1 ? `, and ${list.length - 1} more fable${list.length > 2 ? 's' : ''}` : ''); }
   return t;
@@ -145,33 +166,38 @@ function tidyTitle(t) {
 
 // ---------- the stations ----------
 // kc = position on the dial (AM band, 540-1600 kc). Keep them ~85 kc apart.
+// Ray Bradbury radio adaptations, merged into one pool
+const BRADBURY = ['Bradbury_On_Radio', 'RayBradbury_TalesBizarre', '09-bradbury-13-the-man', 'BBC_Bradbury'];
+
 const CHANNELS = [
-  { id: 'mystery', name: 'Mystery Theater', short: 'MYSTERY', kc: 600, blurb: 'Suspense, whodunits and things that go bump.',
-    sources: ['OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW] },
-  { id: 'sherlock', name: 'Baker Street Radio', short: 'HOLMES', kc: 676, blurb: 'The world’s only consulting detective, on the air and on the page.', count: 60,
+  { id: 'mystery', name: 'Mystery Theater', short: 'MYSTERY', kc: 600, blurb: 'Suspense, whodunits and things that go bump.', count: 48,
+    sources: ['OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', 'cbsrmt-74-02-08-33-conspiracy-to-defraud'] },
+  { id: 'shadow', name: 'The Shadow Knows', short: 'SHADOW', kc: 671, blurb: 'Who knows what evil lurks in the hearts of men? The Shadow knows.', count: 48,
+    sources: [SHADOW] },
+  { id: 'sherlock', name: 'Baker Street Radio', short: 'HOLMES', kc: 741, blurb: 'The world’s only consulting detective, on the air and on the page.', count: 60,
     sources: ['sherlockholmes_otr', 'HQSherlockConwayTCS', ['tcssherlockholmesjohnstanleyhq', 'tcssherlockholmesjohnstanleyhq2'], 'hound_baskervilles_librivox'] },
-  { id: 'scifi', name: 'Rocket Radio', short: 'SCI-FI', kc: 752, blurb: 'Tomorrow, as imagined yesterday.',
-    sources: ['OTRR_X_Minus_One_Singles', 'OTRR_Dimension_X_Singles', 'OTRR_Dark_Fantasy_Singles'] },
-  { id: 'crime', name: 'Crime Beat', short: 'CRIME', kc: 828, blurb: 'Badges, gumshoes and private eyes.',
-    sources: ['OTRR_Dragnet_Singles', 'OTRR_YoursTrulyJohnnyDollar_Singles', 'OTRR_Philip_Marlowe_Singles', 'OTRR_Sam_Spade_Singles', 'OTRR_Richard_Diamond_Private_Detective_Singles'] },
-  { id: 'spies', name: 'Spies & Lawmen', short: 'SPIES', kc: 904, blurb: 'G-men, secret agents and the DA’s office.',
+  { id: 'scifi', name: 'Rocket Radio', short: 'SCI-FI', kc: 812, blurb: 'Tomorrow, as imagined yesterday.', count: 48,
+    sources: ['OTRR_X_Minus_One_Singles', 'OTRR_Dimension_X_Singles', 'OTRR_Dark_Fantasy_Singles', 'Mindwebs_230', BRADBURY] },
+  { id: 'crime', name: 'Crime Beat', short: 'CRIME', kc: 882, blurb: 'Badges, gumshoes and private eyes.', count: 48,
+    sources: ['OTRR_Dragnet_Singles', 'OTRR_YoursTrulyJohnnyDollar_Singles', 'OTRR_Philip_Marlowe_Singles', 'OTRR_Sam_Spade_Singles', 'OTRR_Richard_Diamond_Private_Detective_Singles', 'NightBeataccurate', 'TheSaintVincentPriceOTR'] },
+  { id: 'spies', name: 'Spies & Lawmen', short: 'SPIES', kc: 953, blurb: 'G-men, secret agents and the DA’s office.',
     sources: ['OTRR_Counterspy_Singles', 'OTRR_Man_Called_X_Singles', 'Otrr_Dangerous_Assignment_Singles', 'OTRR_This_Is_Your_FBI_Singles', 'OTRR_Mr_District_Attorney_Singles', 'OTRR_Cloak_and_Dagger_Singles'] },
-  { id: 'adventure', name: 'Adventure Hour', short: 'ADVENTURE', kc: 980, blurb: 'Mounties, rocket rangers and daring escapes.',
-    sources: ['OTRR_Challenge_of_the_Yukon_Singles', 'OTRR_Space_Patrol_Singles', 'OTRR_Ranger_Bill_Singles', 'OTRR_High_Adventure_Singles'] },
-  { id: 'western', name: 'Western Trail', short: 'WESTERN', kc: 1056, blurb: 'Marshals, outlaws and wide-open spaces.',
-    sources: ['OTRR_Gunsmoke_Singles', 'OTRR_LoneRanger_Singles', 'OTRR_The_Six_Shooter_Singles', 'OTRR_Fort_Laramie_Singles'] },
-  { id: 'comedy', name: 'Laugh Parade', short: 'COMEDY', kc: 1132, blurb: 'Variety, sitcoms and wisecracks.',
-    sources: ['OTRR_Jack_Benny_Singles_1949-1950', 'Otrr_The_Great_Gildersleeve_Singles', 'OTRR_Harris_Faye_Singles'] },
-  { id: 'sitcom', name: 'Sitcom Row', short: 'SITCOMS', kc: 1208, blurb: 'Schoolteachers, taverns and family dinners.',
+  { id: 'adventure', name: 'Adventure Hour', short: 'ADVENTURE', kc: 1024, blurb: 'Mounties, rocket rangers and daring escapes.', count: 48,
+    sources: ['OTRR_Challenge_of_the_Yukon_Singles', 'OTRR_Space_Patrol_Singles', 'OTRR_Ranger_Bill_Singles', 'OTRR_High_Adventure_Singles', 'OTRR_Escape_Singles', 'TheAdventuresOfSuperman_201805'] },
+  { id: 'western', name: 'Western Trail', short: 'WESTERN', kc: 1094, blurb: 'Marshals, outlaws and wide-open spaces.',
+    sources: ['OTRR_Gunsmoke_Singles', 'OTRR_LoneRanger_Singles', 'OTRR_The_Six_Shooter_Singles', 'OTRR_Fort_Laramie_Singles', 'OTRR_Have_Gun_Singles'] },
+  { id: 'comedy', name: 'Laugh Parade', short: 'COMEDY', kc: 1165, blurb: 'Variety, sitcoms and wisecracks.',
+    sources: ['OTRR_Jack_Benny_Singles_1949-1950', 'Otrr_The_Great_Gildersleeve_Singles', 'OTRR_Harris_Faye_Singles', 'The_Bob_Hope_Program'] },
+  { id: 'sitcom', name: 'Sitcom Row', short: 'SITCOMS', kc: 1235, blurb: 'Schoolteachers, taverns and family dinners.',
     sources: ['OTRR_Our_Miss_Brooks_Singles', 'OTRR_My_Friend_Irma_Singles', 'OTRR_Duffys_Tavern_Singles', 'OTRR_Life_with_Luigi_Singles', 'OTRR_Father_Knows_Best_Singles', 'OTRR_Abbott_Costello_Singles'] },
-  { id: 'variety', name: 'Showtime Variety', short: 'VARIETY', kc: 1284, blurb: 'Musicals, sketches and a little Borge.',
+  { id: 'variety', name: 'Showtime Variety', short: 'VARIETY', kc: 1306, blurb: 'Musicals, sketches and a little Borge.',
     sources: ['OTRR_Railroad_Hour_Singles', 'OTRR_Danny_Kaye_Singles', 'OTRR_Alka_Seltzer_Time_Singles', 'OTRR_Mel_Blanc_Singles', 'OTRR_Shell_Chateau_Singles', 'OTRR_Victor_Borge_Collection_Singles', 'OTRR_Day_in_the_Life_of_Dennis_Day_Singles'] },
-  { id: 'playhouse', name: 'Radio Playhouse', short: 'PLAYHOUSE', kc: 1360, blurb: 'Hollywood stars and great stories, live.',
+  { id: 'playhouse', name: 'Radio Playhouse', short: 'PLAYHOUSE', kc: 1377, blurb: 'Hollywood stars and great stories, live.',
     sources: ['OTRR_Lux_Radio_Theater_Singles', 'OTRR_Cavalcade_of_America_Singles', 'OTRR_Broadway_Is_My_Beat_Singles', 'OTRR_Family_Theater_Singles'] },
-  { id: 'history', name: 'The Home Front', short: 'HISTORY', kc: 1436, blurb: 'Wartime dispatches and stories from American history.',
+  { id: 'history', name: 'The Home Front', short: 'HISTORY', kc: 1447, blurb: 'Wartime dispatches and stories from American history.',
     sources: ['OTRR_Words_At_War_Singles', 'OTRR_Pacific_Story_Singles', 'OTRR_Proudly_We_Hail_Singles', 'OTRR_Destination_Freedom_Singles', 'OTRR_American_History_Singles', 'OTRR_Sound_of_War_Singles', 'OTRR_Big_Story_Singles'] },
-  { id: 'chills', name: 'Chiller Hour', short: 'CHILLS', kc: 1512, blurb: 'Best enjoyed with the lights down low.',
-    sources: ['OTRR_Sealed_Book_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Black_Museum_Singles', 'OTRR_Escape_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please'] },
+  { id: 'chills', name: 'Chiller Hour', short: 'CHILLS', kc: 1518, blurb: 'Best enjoyed with the lights down low.', count: 54,
+    sources: ['OTRR_Sealed_Book_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Black_Museum_Singles', 'OTRR_Escape_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Suspense_Singles', 'CBC_NightfallOTR', 'price-of-fearUPGRADES'] },
   // Bedtime: short tales in random order, plus three books read a chapter at a time, in order,
   // across the loop (a source listed as an array is merged into one pool).
   { id: 'bedtime', name: 'Bedtime Stories', short: 'BEDTIME', kc: 1588, blurb: 'Fairy tales and gentle stories, read aloud. Pair with the sleep timer.', count: 108,
@@ -191,11 +217,15 @@ const SCARY = 'ghost|haunt|horror|halloween|witch|vampire|werewolf|monster|zombi
 const SPECIALS = [
   // holidays first: they win over weekly slots
   { id: 'fri13', title: 'Friday the 13th Fright Night', blurb: 'All day long. Don’t listen alone.', rule: { type: 'friday13' }, channel: 'chills', filter: SCARY, count: 20,
-    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW, 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles'] },
+    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', 'cbsrmt-74-02-08-33-conspiracy-to-defraud', 'CBC_NightfallOTR', 'price-of-fearUPGRADES', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles'] },
   { id: 'halloween', title: 'Halloween Week of Horrors', blurb: 'Seven nights of the spookiest broadcasts on the dial.', rule: { type: 'range', from: '10-25', to: '10-31' }, channel: 'chills', filter: SCARY, count: 24,
-    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles', 'OTRR_Suspense_Singles'] },
+    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles', 'OTRR_Suspense_Singles', 'CBC_NightfallOTR', 'price-of-fearUPGRADES'] },
   { id: 'halloween-mystery', title: 'Halloween Week of Horrors', blurb: 'Seven nights of Inner Sanctum and Suspense at their creepiest.', rule: { type: 'range', from: '10-25', to: '10-31' }, channel: 'mystery', filter: SCARY, count: 24,
-    sources: ['OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW] },
+    sources: ['OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', 'cbsrmt-74-02-08-33-conspiracy-to-defraud'] },
+  { id: 'fri13-shadow', title: 'Friday the 13th: The Shadow Knows', blurb: 'The Shadow’s most sinister cases, all day.', rule: { type: 'friday13' }, channel: 'shadow', filter: SCARY, count: 20,
+    sources: [SHADOW] },
+  { id: 'shadow-halloween', title: 'The Shadow’s Halloween', blurb: 'A week of the Shadow’s darkest cases, October 25–31.', rule: { type: 'range', from: '10-25', to: '10-31' }, channel: 'shadow', filter: SCARY, count: 24,
+    sources: [SHADOW] },
   { id: 'xmas-comedy', title: 'Christmas on the Radio', blurb: 'Holiday episodes, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'comedy', filter: XMAS, count: 24,
     sources: ['Otrr_The_Great_Gildersleeve_Singles', 'OTRR_Harris_Faye_Singles', 'OTRR_Jack_Benny_Singles_1949-1950'] },
   { id: 'xmas-sitcom', title: 'Christmas on the Radio', blurb: 'Holiday episodes, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'sitcom', filter: XMAS, count: 24,
@@ -203,7 +233,7 @@ const SPECIALS = [
   { id: 'xmas-playhouse', title: 'Christmas on the Radio', blurb: 'Holiday dramas, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'playhouse', filter: XMAS, count: 16,
     sources: ['OTRR_Lux_Radio_Theater_Singles', 'OTRR_Cavalcade_of_America_Singles', 'OTRR_Family_Theater_Singles', 'OTRR_Broadway_Is_My_Beat_Singles'] },
   { id: 'xmas-mystery', title: 'Christmas on the Radio', blurb: 'Yuletide suspense, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'mystery', filter: XMAS, count: 12,
-    sources: ['OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', SHADOW] },
+    sources: ['OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles'] },
   { id: 'xmas-western', title: 'Christmas on the Radio', blurb: 'Christmas on the frontier, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'western', filter: XMAS, count: 12,
     sources: ['OTRR_Gunsmoke_Singles', 'OTRR_LoneRanger_Singles', 'OTRR_The_Six_Shooter_Singles'] },
   { id: 'july4', title: 'Fourth of July Celebration', blurb: 'Stories of liberty and the nation’s founding, July 1–4.', rule: { type: 'range', from: '07-01', to: '07-04' }, channel: 'history',
@@ -216,11 +246,13 @@ const SPECIALS = [
     sources: ['SherlockHolmesChristmas', 'sherlockholmes_otr', 'HQSherlockConwayTCS', 'tcssherlockholmesjohnstanleyhq', 'tcssherlockholmesjohnstanleyhq2'] },
   { id: 'xmas-bedtime', title: 'Christmas Bedtime Stories', blurb: '’Twas the night before Christmas, then A Christmas Carol in five staves, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'bedtime', count: 8,
     sources: ['nightbeforechristmas_librivox', 'christmascarol_librivox'] },
+  { id: 'bradbury-week', title: 'Ray Bradbury Birthday Week', blurb: 'Stories by Ray Bradbury (born August 22, 1920) as adapted for radio, from 1946 to the 1990s.', rule: { type: 'range', from: '08-19', to: '08-25' }, channel: 'scifi', count: 36,
+    sources: [BRADBURY] },
   // weekly appointment listening
   { id: 'hound-reading', title: 'Baker Street Book Club: The Hound of the Baskervilles', blurb: 'A complete reading, from the first knock at the door to the last chapter on the moor.', rule: { type: 'weekly', days: [5], from: '20:00', to: '02:00' }, channel: 'sherlock', count: 15,
     sources: ['hound_baskervilles_librivox'] },
-  { id: 'shadow-knows', title: 'The Shadow Knows', blurb: 'Lamont Cranston and the Shadow, from 1937 to 1954. Who knows what evil lurks in the hearts of men?', rule: { type: 'weekly', days: [0], from: '17:30', to: '19:30' }, channel: 'mystery', count: 8,
-    sources: [SHADOW] },
+  { id: 'creaking-door', title: 'CBS Radio Mystery Theater: the Creaking Door Hour', blurb: 'Every night at eleven: “Come in! Welcome. I’m E. G. Marshall…”', rule: { type: 'weekly', days: [0, 1, 2, 3, 4, 5, 6], from: '23:00', to: '00:00' }, channel: 'mystery', count: 6,
+    sources: ['cbsrmt-74-02-08-33-conspiracy-to-defraud'] },
   { id: 'sunday-suspense', title: 'Sunday Night Suspense', blurb: 'An hour or three of radio’s most celebrated thriller series.', rule: { type: 'weekly', days: [0], from: '20:00', to: '23:00' }, channel: 'mystery', count: 8,
     sources: ['OTRR_Suspense_Singles'] },
   { id: 'sunday-benny', title: 'Sunday Night with Jack Benny', blurb: 'Jack, Mary, Rochester and the Phil Harris band.', rule: { type: 'weekly', days: [0], from: '19:00', to: '21:00' }, channel: 'comedy', count: 8,
@@ -275,14 +307,14 @@ function shuffle(arr, rand) {
 function parseYear(...strings) {
   for (const s of strings) {
     if (!s) continue;
-    const m4 = s.match(/(?:^|[^\d])(19[2-6]\d)[-_.](\d{2})[-_.](\d{2})(?!\d)/);
+    const m4 = s.match(/(?:^|[^\d])(19[2-9]\d)[-_.](\d{2})[-_.](\d{2})(?!\d)/);
     if (m4) return +m4[1];
     const m = s.match(/(?:^|[^\d])(\d{2})[-_.](\d{2})[-_.](\d{2})(?!\d)/) || s.match(/(?:^|[^\d])(\d{2})(\d{2})(\d{2})(?:[^\d]|$)/);
     if (m) {
       const yy = +m[1], mm = +m[2], dd = +m[3];
       if (mm >= 1 && mm <= 12 && dd >= 1 && dd <= 31) return 1900 + yy;
     }
-    const y4 = s.match(/\b(19[2-6]\d)\b/);
+    const y4 = s.match(/\b(19[2-9]\d)\b/);
     if (y4) return +y4[1];
   }
   return null;
@@ -354,7 +386,8 @@ async function loadSource(src) {
     const key = `${y}|${title.toLowerCase()}`;
     if (seenTitle.has(key)) continue;                                    // same episode uploaded twice
     seenTitle.add(key);
-    const ep = { t: title, s: src.show, d: Math.round(dur), i: src.item, f: f.name, y };
+    const show = (o.showRe && (f.name.match(o.showRe) || [])[1]) || src.show;
+    const ep = { t: title, s: show, d: Math.round(dur), i: src.item, f: f.name, y };
     if (o.note) ep.n = o.note;
     eps.push(ep);
   }
@@ -380,15 +413,27 @@ async function poolFor(entry, rand, re) {
   let eps = [];
   for (const item of items) eps = eps.concat(await episodesOf(item));
   if (re) eps = eps.filter((e) => re.test(`${e.t} ${e.f}`));
-  return items.every((i) => OPTS[i] && OPTS[i].ordered) ? eps : shuffle(eps, rand);
+  if (!items.every((i) => OPTS[i] && OPTS[i].ordered)) return shuffle(eps, rand);
+  const run = items.length === 1 && OPTS[items[0]].run;                   // a few consecutive chapters of a long serial
+  if (run && eps.length > run) {
+    const rs = OPTS[items[0]].runStart;                                   // begin at the start of a serial, not mid-story
+    const starts = eps.map((e, i) => (i <= eps.length - run && (!rs || rs.test(`${e.t} ${e.f}`)) ? i : -1)).filter((i) => i >= 0);
+    const start = starts.length ? starts[Math.floor(rand() * starts.length)] : 0;
+    return eps.slice(start, start + run);
+  }
+  return eps;
 }
 
 function interleave(pools, count) {
-  const lineup = [];
+  const lineup = [], used = new Set();
   for (let round = 0; lineup.length < count; round++) {
     let added = false;
     for (const pool of pools) {
-      if (round < pool.length && lineup.length < count) { lineup.push(pool[round]); added = true; }
+      if (round < pool.length && lineup.length < count) {
+        const e = pool[round], key = `${e.i}|${e.f}`;
+        if (used.has(key)) continue;                                     // the same recording can't air twice in one lineup
+        used.add(key); lineup.push(e); added = true;
+      }
     }
     if (!added) break;
   }

@@ -12,7 +12,7 @@ straight from the [Internet Archive](https://archive.org/details/oldtimeradio).
   Between stations you hear static and a heterodyne whistle; the green "magic eye" narrows as you lock on.
 * **Radio Guide** (the magazine on the sideboard, or press `G`): *Special Broadcasts* coming up, plus what is on now / next / later on every station.
 * **Share** (🔗): copies a link such as `index.html#crime` that opens with the dial set to that station (the visitor
-  still has to click Power, because browsers block autoplay). Station ids: `mystery sherlock scifi crime spies adventure western comedy sitcom variety playhouse history chills bedtime`.
+  still has to click Power, because browsers block autoplay). Station ids: `mystery shadow sherlock scifi crime spies adventure western comedy sitcom variety playhouse history chills bedtime`.
   The address bar updates as you tune, so you can also just copy it. Links only work for other people once the site is hosted.
 * **Sleep timer** (🌙, or `S`): cycles 15 → 30 → 45 → 60 → 90 min → off. Volume fades over the last 45 seconds, then the radio switches off.
 * **Lean in** (🔍, or `Z`): zooms right up to the dial and knobs so the station names are as large as the screen allows; click again (or `Z`) to step back. Your choice is remembered.
@@ -39,12 +39,18 @@ garland along the top of the wall, and the props on the sideboard.
 Preview any theme by adding `?theme=` to the address, e.g. `index.html?theme=halloween` (themes: spring summer autumn winter valentines july4 halloween thanksgiving christmas).
 Seasons follow the northern hemisphere and US holidays. Edit `pick()` in `docs/seasons.js` to change the dates; the palettes and props are in `docs/seasons.css`.
 
-## Stations (14)
+## Stations (15)
 
-Mystery Theater 600 · **Baker Street Radio 676** · Rocket Radio 752 · Crime Beat 828 · Spies & Lawmen 904 · Adventure Hour 980 · Western Trail 1056 ·
-Laugh Parade 1132 · Sitcom Row 1208 · Showtime Variety 1284 · Radio Playhouse 1360 · The Home Front 1436 · Chiller Hour 1512 · **Bedtime Stories 1588**
+Mystery Theater 600 · **The Shadow Knows 671** · Baker Street Radio 741 · Rocket Radio 812 · Crime Beat 882 · Spies & Lawmen 953 · Adventure Hour 1024 ·
+Western Trail 1094 · Laugh Parade 1165 · Sitcom Row 1235 · Showtime Variety 1306 · Radio Playhouse 1377 · The Home Front 1447 · Chiller Hour 1518 · Bedtime Stories 1588
 
-* **Mystery Theater** includes *The Shadow*: 200 episodes (1937–54) from a Public Domain item on archive.org, mixed into the loop, into the Halloween, Friday-the-13th and Christmas specials, and in its own Sunday-afternoon slot.
+* **The Shadow Knows**: the whole run of *The Shadow* (200 episodes, 1937–54).
+* **Mystery Theater**: *Suspense*, *Inner Sanctum Mysteries*, *The Whistler*, *The Mysterious Traveler* and *CBS Radio Mystery Theater* (1974–82).
+* **Crime Beat** adds *Night Beat* and *The Saint* (the Vincent Price series) to Dragnet, Johnny Dollar, Philip Marlowe, Sam Spade and Richard Diamond.
+* **Western Trail** adds *Have Gun, Will Travel*; **Laugh Parade** adds *The Bob Hope Show*.
+* **Adventure Hour** adds *Escape* and *The Adventures of Superman* (a few consecutive serial chapters, in order, starting at the beginning of a story).
+* **Rocket Radio** adds *Mindwebs* and a pool of **Ray Bradbury** radio adaptations (*Suspense*, *Dimension X*, *X Minus One*, BBC's *Tales of the Bizarre*, NPR's *Bradbury 13* and more).
+* **Chiller Hour** adds *Inner Sanctum*, *Suspense*, *Nightfall* (CBC) and *The Price of Fear* (BBC) to *Escape*, *Quiet, Please*, *Lights Out* and more.
 * **Baker Street Radio** shuffles the Basil Rathbone/Nigel Bruce, Tom Conway and John Stanley radio dramas, and weaves in
   *The Hound of the Baskervilles* (a LibriVox reading) as a serial: one chapter at a time, in order, between the dramas.
 * **Bedtime Stories** plays fairy tales and fables at random (Grimm, Andersen, English fairy tales, Aesop, *Just So Stories*, Beatrix Potter)
@@ -79,7 +85,9 @@ over the start of a special is cut off, like a real station going to a scheduled
 | A Sherlock Holmes Christmas | Dec 20–26 | Baker Street Radio |
 | Christmas Bedtime Stories (*’Twas the Night Before Christmas*, then *A Christmas Carol* in five staves) | Dec 20–26 | Bedtime Stories |
 | Baker Street Book Club: *The Hound of the Baskervilles*, a complete reading from chapter 1 | Fridays 8 pm–2 am | Baker Street Radio |
-| The Shadow Knows (Lamont Cranston and the Shadow, 1937–54) | Sundays 5:30–7:30 pm | Mystery Theater |
+| CBS Radio Mystery Theater: the Creaking Door Hour (every night at eleven) | nightly 11 pm–midnight | Mystery Theater |
+| Friday the 13th: The Shadow Knows; The Shadow’s Halloween | Fri 13th all day; Oct 25–31 | The Shadow Knows |
+| Ray Bradbury Birthday Week | Aug 19–25 (he was born Aug 22, 1920) | Rocket Radio |
 | Sunday Night Suspense | Sundays 8–11 pm | Mystery Theater |
 | Sunday Night with Jack Benny | Sundays 7–9 pm | Laugh Parade |
 | Saturday Night Roundup (Gunsmoke) | Saturdays 7–10 pm | Western Trail |
@@ -121,6 +129,13 @@ Always check each item's license.
 
 The site is static; `docs/` is the whole thing. In the repository's Settings → Pages, set *Deploy from a branch*, branch `main`, folder `/docs`.
 Any push to `main` then republishes it. Opening `docs/index.html` straight from disk also works.
+
+## A note on rights
+
+The older shows (1930s–50s) are mostly public domain or shared under Creative Commons. Some later ones on the dial are almost
+certainly still under copyright even where the uploader marked them otherwise: *CBS Radio Mystery Theater* (1974–82), *Mindwebs*, *Nightfall*,
+*The Price of Fear*, and the BBC and NPR Bradbury programmes. This site hosts none of the audio; it streams from the Internet Archive's copies, which
+the Archive can remove at any time (the build skips anything that has gone). Remove a show from `SHOWS` / `CHANNELS` in `scripts/build-channels.mjs` and re-run `npm run build:data` to drop it.
 
 ## License
 
