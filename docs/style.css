@@ -309,6 +309,37 @@ body.hint-guide .mag-hint { opacity: .95; }
   .row .slot.later { display: none; }
 }
 
+/* ---------- the first-visit tour ---------- */
+.tour { position: fixed; inset: 0; z-index: 60; }
+.tour[hidden] { display: none; }
+.tour-dim { position: absolute; inset: 0; background: rgba(10, 5, 2, .8); backdrop-filter: blur(2px); opacity: 0; transition: opacity .3s; }
+.tour.centered .tour-dim { opacity: 1; }
+.tour-ring { position: absolute; border-radius: 16px; pointer-events: none; opacity: 0; box-shadow: 0 0 0 100vmax rgba(10, 5, 2, .78), 0 0 0 3px #ffd27a, 0 0 30px 8px rgba(255, 210, 122, .5);
+  transition: left .4s cubic-bezier(.3, .7, .2, 1), top .4s cubic-bezier(.3, .7, .2, 1), width .4s cubic-bezier(.3, .7, .2, 1), height .4s cubic-bezier(.3, .7, .2, 1), opacity .25s; }
+.tour:not(.centered) .tour-ring { opacity: 1; animation: ringpulse 2.2s ease-in-out infinite; }
+@keyframes ringpulse { 50% { box-shadow: 0 0 0 100vmax rgba(10, 5, 2, .78), 0 0 0 3px #ffe9b0, 0 0 40px 14px rgba(255, 210, 122, .65); } }
+.tour-card { position: absolute; width: min(92vw, 410px); padding: 20px 22px 14px; color: var(--ink); border: 3px double #3a2a1a; border-radius: 3px; transition: left .35s ease, top .35s ease;
+  background: radial-gradient(ellipse at 20% 10%, rgba(255, 255, 255, .45), transparent 55%), repeating-linear-gradient(0deg, rgba(120, 90, 40, .05) 0 2px, transparent 2px 5px), #efe3c5;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .7), inset 0 0 40px rgba(120, 80, 30, .22); }
+.tour-kicker { margin: 0 0 4px; font: 12px 'Special Elite', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+.tour-card h2 { margin: 0 0 8px; font: 400 clamp(24px, 6vw, 30px)/1.1 'Limelight', 'Old Standard TT', serif; letter-spacing: .04em; color: var(--red); }
+.tour-text { margin: 0 0 12px; font-size: 16.5px; line-height: 1.45; }
+.tour-text b { font-weight: 700; }
+.tour-text kbd { font: 12px 'Special Elite', monospace; padding: 1px 5px; border: 1px solid rgba(42, 27, 16, .5); border-radius: 3px; background: rgba(255, 255, 255, .45); }
+.tour-dots { display: flex; gap: 7px; margin: 0 0 12px; }
+.tour-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(42, 27, 16, .22); }
+.tour-dots i.on { background: var(--red); }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-actions .grow { flex: 1; }
+.tbtn { padding: 8px 15px; border: 2px solid var(--ink); border-radius: 4px; background: transparent; color: var(--ink); font: 700 15px 'Old Standard TT', serif; cursor: pointer; }
+.tbtn:hover { background: rgba(42, 27, 16, .1); }
+.tbtn.primary { background: var(--red); border-color: var(--red); color: #fff7e6; }
+.tbtn.primary:hover { background: #b32424; }
+.tbtn.quiet { border-color: transparent; text-decoration: underline; padding-left: 0; font-weight: 400; }
+.tbtn:focus-visible { outline: 3px solid #1f5fbf; outline-offset: 2px; }
+.tbtn[hidden] { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
+  .tour-ring, .tour-card, .tour-dim { transition: none; } .tour:not(.centered) .tour-ring { animation: none; }
   body.on .dial-lit, body.off .kw-power .knob, body.hint-guide .magazine, body.on.playing .grille .cloth { animation: none; }
 }

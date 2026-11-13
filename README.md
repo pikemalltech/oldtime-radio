@@ -9,6 +9,7 @@ straight from the [Internet Archive](https://archive.org/details/oldtimeradio). 
 
 ## Using it
 
+* **First visit**: a short guided tour highlights the real controls (Power, dial and tuning knob, Radio Guide, control bar) and ends with a "Switch on the radio" button. It is shown once per browser. The ❓ Help button (or `H`) replays it; add `?tour=1` to the address to force it or `?tour=0` to suppress it.
 * **Power knob**: switch on (the tubes take a moment to warm up). Browsers need a click before they will play sound.
 * **Tuning**: drag the big knob, scroll over the radio, press ← → (Shift for bigger steps), or click a station name on the dial.
   Between stations you hear static and a heterodyne whistle; the green "magic eye" narrows as you lock on.
@@ -18,7 +19,7 @@ straight from the [Internet Archive](https://archive.org/details/oldtimeradio). 
   The address bar updates as you tune, so you can also just copy it. Links only work for other people once the site is hosted.
 * **Sleep timer** (🌙, or `S`): cycles 15 → 30 → 45 → 60 → 90 min → off. Volume fades over the last 45 seconds, then the radio switches off.
 * **Lean in** (🔍, or `Z`): zooms right up to the dial and knobs so the station names are as large as the screen allows; click again (or `Z`) to step back. Your choice is remembered.
-* Keys: `Space` power · `↑ ↓` or `[ ]` next/previous station · `+ -` volume · `S` sleep · `Z` lean in · `G` guide · `Esc` close the guide.
+* Keys: `Space` power · `↑ ↓` or `[ ]` next/previous station · `+ -` volume · `S` sleep · `Z` lean in · `G` guide · `H` help tour · `Esc` close the guide.
 
 ## Seasonal decor
 

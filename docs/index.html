@@ -189,6 +189,7 @@
   <button class="hbtn wide" id="zoomBtn" aria-pressed="false" title="Zoom in on the dial and knobs (Z)">🔍 <span>Lean in</span></button>
   <button class="hbtn wide" id="shareBtn" title="Copy a link to this station">🔗 <span>Share</span></button>
   <label class="hvol"><span class="sr">Volume</span>🔈<input id="volRange" type="range" min="0" max="100" value="70"></label>
+  <button class="hbtn wide" id="helpBtn" title="How to use Yesterdial (H)">❓ <span>Help</span></button>
   <button class="hbtn wide" id="guideBtn">📖 <span>Guide</span></button>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -207,6 +208,24 @@
     <footer>
       <p>Every program is streamed directly from the <a href="https://archive.org/details/oldtimeradio" target="_blank" rel="noopener">Internet Archive's Old Time Radio</a> collection, largely thanks to the volunteers of the Old Time Radio Researchers group. Each station follows the clock, so everyone listening hears the same show at the same moment. Many recordings are shared under Creative Commons non-commercial terms. Follow a program's link to see its source and license.</p>
     </footer>
+  </section>
+</div>
+
+<!-- ===== first-visit tour ===== -->
+<div class="tour" id="tour" hidden>
+  <div class="tour-dim"></div>
+  <div class="tour-ring" id="tourRing"></div>
+  <section class="tour-card" id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourText">
+    <p class="tour-kicker" id="tourStep"></p>
+    <h2 id="tourTitle"></h2>
+    <p class="tour-text" id="tourText"></p>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="tour-actions">
+      <button type="button" class="tbtn quiet" id="tourSkip">Skip</button>
+      <span class="grow"></span>
+      <button type="button" class="tbtn" id="tourBack">Back</button>
+      <button type="button" class="tbtn primary" id="tourNext">Next</button>
+    </div>
   </section>
 </div>
 

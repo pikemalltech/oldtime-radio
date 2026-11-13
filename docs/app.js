@@ -522,6 +522,7 @@ $('#nextBtn').addEventListener('click', () => stepStation(1));
 // global keys
 addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (tourOpen()) return;
   const inGuide = !$('#guide').hidden;
   if (e.key === 'Escape' && inGuide) { closeGuide(); return; }
   if (inGuide) return;
@@ -535,6 +536,7 @@ addEventListener('keydown', (e) => {
   else if (e.key === '+' || e.key === '=') setVolume(state.vol + 0.05);
   else if (e.key === '-') setVolume(state.vol - 0.05);
   else if (e.key.toLowerCase() === 'g') openGuide();
+  else if (e.key.toLowerCase() === 'h' || e.key === '?') openTour(0);
   else if (e.key.toLowerCase() === 's') cycleSleep();
   else if (e.key.toLowerCase() === 'z') setLean(!state.lean);
 });
@@ -691,6 +693,102 @@ $('#guideBtn').addEventListener('click', openGuide);
 $('#guideClose').addEventListener('click', closeGuide);
 guideEl.addEventListener('click', (e) => { if (e.target === guideEl) closeGuide(); });
 
+// ---------------------------------------------------------------- the first-visit tour
+// Shown once (remembered in localStorage). The Help button or the H key replays it; ?tour=1 forces it, ?tour=0 suppresses it.
+const TOUR = [
+  { title: 'Welcome to Yesterdial', text: 'Fifteen stations of old-time radio are on the air right now: <b>mystery, The Shadow, Sherlock Holmes, comedy, sci-fi, westerns and bedtime stories</b>. Here is a 30-second tour of the radio.', next: 'Show me around', skip: 'Skip' },
+  { target: ['#knobPower'], title: 'Switch it on', text: 'Click the <b>POWER</b> knob. The tubes need a moment to warm up. (Browsers stay silent until you click something, so the sound starts with this click.)' },
+  { target: ['#dial', '#knobTune'], title: 'Tune in', text: 'Click a <b>station name</b> on the dial, or drag the big <b>TUNING</b> knob (or scroll over the radio). When the red needle sits on a station and the green eye narrows, you are locked on. Between stations you will hear static. <kbd>←</kbd> <kbd>→</kbd> fine-tune; <kbd>↑</kbd> <kbd>↓</kbd> jump a station.' },
+  { target: ['#magazine'], title: 'Read the Radio Guide', text: 'Click the <b>magazine</b> to see what is on <b>now, next and later</b> on every station, plus special broadcasts like Sunday Night Suspense, Friday the 13th and Christmas week.' },
+  { target: ['#hud'], title: 'A few more things', text: 'Use ◀ ▶ to change station, 🌙 for a <b>sleep timer</b>, 🔗 to <b>share</b> a station, and 🔍 to <b>lean in</b> for a closer look at the dial. Tap the station name for the full list. The room redecorates itself with the seasons.' },
+  { title: 'That’s all there is to it', text: 'Every station follows the clock, so everyone listening hears the same show at the same moment, just like real radio. The help button <b>❓</b> brings this tour back any time.', next: 'Switch on the radio', back: 'Back', skip: 'Just look around', last: true },
+];
+const tourEl = $('#tour'), tourCard = $('#tourCard'), tourRing = $('#tourRing');
+let tourStep = 0, tourFocus = null;
+const tourOpen = () => !tourEl.hidden;
+
+function tourRect(sels) {
+  let r = null;
+  for (const s of sels || []) {
+    const el = $(s); if (!el) continue;
+    const b = el.getBoundingClientRect();
+    if (!b.width || !b.height) continue;
+    r = r ? { l: Math.min(r.l, b.left), t: Math.min(r.t, b.top), r: Math.max(r.r, b.right), b: Math.max(r.b, b.bottom) } : { l: b.left, t: b.top, r: b.right, b: b.bottom };
+  }
+  return r && r.b > 0 && r.t < innerHeight && r.r > 0 && r.l < innerWidth ? r : null;
+}
+
+function renderTour() {
+  const step = TOUR[tourStep], last = tourStep === TOUR.length - 1;
+  $('#tourStep').textContent = tourStep === 0 || last ? 'Yesterdial · tune in to yesterday' : `Step ${tourStep} of ${TOUR.length - 2}`;
+  $('#tourTitle').textContent = step.title;
+  $('#tourText').innerHTML = step.text;                      // our own constant strings only
+  $('#tourDots').replaceChildren(...TOUR.map((_, i) => el('i', i === tourStep ? 'on' : '')));
+  $('#tourNext').textContent = step.next || 'Next';
+  $('#tourSkip').textContent = step.skip || 'Skip tour';
+  $('#tourBack').hidden = tourStep === 0;
+  positionTour();
+}
+
+function positionTour() {
+  if (!tourOpen()) return;
+  const step = TOUR[tourStep], vw = innerWidth, vh = innerHeight, m = 12, pad = step.target && step.target[0] === '#hud' ? 6 : 12;
+  const rect = tourRect(step.target);
+  tourEl.classList.toggle('centered', !rect);
+  const cw = tourCard.offsetWidth, ch = tourCard.offsetHeight;
+  let left, top;
+  if (rect) {
+    Object.assign(tourRing.style, { left: rect.l - pad + 'px', top: rect.t - pad + 'px', width: rect.r - rect.l + pad * 2 + 'px', height: rect.b - rect.t + pad * 2 + 'px' });
+    left = clamp((rect.l + rect.r) / 2 - cw / 2, m, vw - cw - m);
+    const below = rect.b + pad + 16, above = rect.t - pad - 16 - ch;
+    top = below + ch <= vh - m ? below : above >= m ? above : clamp(vh - ch - m, m, vh);   // otherwise tuck it against the bottom
+  } else {
+    left = (vw - cw) / 2; top = Math.max(m, (vh - ch) / 2);
+  }
+  tourCard.style.left = left + 'px'; tourCard.style.top = top + 'px';
+}
+
+function openTour(from = 0) {
+  tourFocus = document.activeElement; tourStep = from;
+  if (!$('#guide').hidden) closeGuide();
+  tourEl.hidden = false;
+  tourCard.style.left = '50%'; tourCard.style.top = '40%';
+  renderTour();
+  $('#tourNext').focus();
+}
+function closeTour(powerOnAfter = false) {
+  tourEl.hidden = true;
+  store.set('welcomed', true);
+  if (powerOnAfter) powerOn();
+  else if (tourFocus && tourFocus.focus) tourFocus.focus();
+}
+function tourGo(delta) {
+  const n = tourStep + delta;
+  if (n < 0) return;
+  if (n >= TOUR.length) { closeTour(true); return; }
+  tourStep = n; renderTour();
+}
+$('#tourNext').addEventListener('click', () => tourGo(1));
+$('#tourBack').addEventListener('click', () => tourGo(-1));
+$('#tourSkip').addEventListener('click', () => closeTour(false));
+$('#helpBtn').addEventListener('click', () => openTour(0));
+addEventListener('resize', positionTour);
+addEventListener('keydown', (e) => {                          // capture phase: the tour owns the keyboard while it is open
+  if (!tourOpen()) return;
+  if (e.key === 'Escape') { closeTour(false); }
+  else if (e.key === 'ArrowRight') { tourGo(1); }
+  else if (e.key === 'ArrowLeft') { tourGo(-1); }
+  else if (e.key === 'Tab') {
+    const f = [...tourCard.querySelectorAll('button')].filter((b) => !b.hidden);
+    const i = f.indexOf(document.activeElement);
+    const nx = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : (i === f.length - 1 ? 0 : i + 1);
+    f[nx].focus();
+  } else if (e.key === 'Enter' || e.key === ' ') return;     // let the focused button handle it
+  else if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1) { /* swallow stray shortcuts */ }
+  else return;
+  e.preventDefault(); e.stopPropagation();
+}, true);
+
 // ---------------------------------------------------------------- animation loop
 const eyeShadow = $('#eyeShadow');
 function eyePath(w) {
@@ -779,6 +877,8 @@ async function boot() {
   if (store.get('lean', false)) setLean(true, false);
   refreshInfo();
   requestAnimationFrame(frame);
-  window.__otr = { state, goTo, powerOn, powerOff, nowPlaying, scheduleAt, signalAt, windowsFor, cycleSleep };   // handy for debugging in the console
+  const tourParam = new URLSearchParams(location.search).get('tour');
+  if (tourParam === '1' || (tourParam !== '0' && !store.get('welcomed', false))) setTimeout(() => openTour(0), 800);
+  window.__otr = { state, openTour, goTo, powerOn, powerOff, nowPlaying, scheduleAt, signalAt, windowsFor, cycleSleep };   // handy for debugging in the console
 }
 boot();
