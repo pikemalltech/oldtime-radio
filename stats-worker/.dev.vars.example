@@ -1,0 +1,2 @@
+ALLOWED_ORIGINS = "null,http://localhost:8080"
+ADMIN_KEY = "change-me"

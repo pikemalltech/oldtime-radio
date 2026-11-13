@@ -165,18 +165,52 @@ addEventListener('resize', layout);
 addEventListener('load', layout);
 layout();
 
+// ---------------------------------------------------------------- live listener counts (optional, see stats.js)
+// `listeningOn(i)` is null when the live counts aren't available, otherwise how many people are listening to station i.
+const stats = window.otrStats || { enabled: false, connected: false, counts: {}, online: 0, total: () => 0, onChange() {}, setListening() {} };
+const listeningOn = (i) => (stats.connected ? stats.counts[state.channels[i].id] || 0 : null);
+const listeningText = (n) => (n === 0 ? 'no one tuned in' : `◉ ${n} listening`);
+
+function updateListenChip() {
+  const chip = $('#listenChip');
+  chip.hidden = !stats.connected;
+  if (!stats.connected) return;
+  const n = stats.total();
+  chip.classList.toggle('live', n > 0);
+  $('#listenN').textContent = n === 0 ? 'none' : String(n);
+  $('#listenWord').textContent = n === 0 ? ' listening yet' : ' listening';
+  chip.title = `${n} listening to a station right now · ${stats.online} visitor${stats.online === 1 ? '' : 's'} here`;
+}
+function updateGuideCounts() {
+  document.querySelectorAll('#guideRows .lcount').forEach((s) => {
+    const n = listeningOn(+s.dataset.i);
+    s.hidden = n === null;
+    if (n !== null) { s.textContent = listeningText(n); s.classList.toggle('on', n > 0); }
+  });
+}
+function onStatsChange() {
+  updateListenChip();
+  if (!$('#guide').hidden) updateGuideCounts();
+  if (!dialTip.hidden && tipFor !== null) fillTip(tipFor);
+  lastInfoKey = ''; refreshInfo();
+}
+if (stats.enabled) { $('#aboutStats').hidden = false; stats.onChange(onStatsChange); }
+
 // ---------------------------------------------------------------- hover tip for the dial's station names
 // Shows the station's full name, dial position, a description, and what is on the air there right now.
 // Mouse: hover. Keyboard: focus. Touch: a tap shows it for a few seconds while the tap tunes in.
 const dialTip = $('#dialTip');
-let tipTimer = 0, tipTick = 0, tipAuto = 0;
+let tipTimer = 0, tipTick = 0, tipAuto = 0, tipFor = null;
 function fillTip(i) {
+  tipFor = i;
   const ch = state.channels[i], np = nowPlaying(i);
   const name = el('b', null, ch.name);
   const kc = el('span', 'kc', `${ch.kc} kc · “${ch.short}” on the dial`);
   const blurb = el('span', 'blurb', ch.blurb);
   const now = el('span', 'now'); now.append(el('em', null, 'On the air now'), document.createTextNode(`${np.ep.s}: ${epLine(np.ep)}`));
   const parts = [name, kc, blurb, now];
+  const who = listeningOn(i);
+  if (who !== null) parts.push(el('span', 'who', who === 0 ? 'No one is tuned in right now' : `◉ ${who} listening now`));
   if (np.special) parts.push(el('span', 'special', `★ ${np.special.title}`));
   parts.push(el('span', 'go', state.on && state.tuned === i ? '◉ You are tuned in' : 'Click to tune in'));
   dialTip.replaceChildren(...parts);
@@ -201,7 +235,7 @@ function showTip(btn, how) {
 }
 function hideTip() {
   clearTimeout(tipTimer); clearInterval(tipTick); clearTimeout(tipAuto);
-  dialTip.classList.remove('show'); dialTip.hidden = true;
+  dialTip.classList.remove('show'); dialTip.hidden = true; tipFor = null;
 }
 addEventListener('resize', hideTip);
 addEventListener('scroll', hideTip, true);
@@ -371,9 +405,10 @@ function refreshInfo() {
     const np = nowPlaying(state.tuned);
     const star = np.special ? '★ ' : '';
     a = star + np.ep.s; b = epLine(np.ep);
-    name = `${ch.name} · ${ch.kc} kc` + (np.special ? ` · ★ ${np.special.title}` : '');
+    const here = listeningOn(state.tuned);
+    name = `${ch.name} · ${ch.kc} kc` + (here ? ` · ${here} listening` : '') + (np.special ? ` · ★ ${np.special.title}` : '');
     now = statusOverride || `${np.ep.s} — ${epLine(np.ep)}`; link = np.ep;
-    key = `t|${state.tuned}|${np.idx}|${np.special ? np.special.id : ''}|${now}`;
+    key = `t|${state.tuned}|${np.idx}|${np.special ? np.special.id : ''}|${here}|${now}`;
   } else {
     a = '· · ·'; b = 'tuning';
     name = `Tuning… ${kc} kc`; now = statusOverride || 'Between stations';
@@ -448,6 +483,7 @@ function powerOff() {
   clearTimeout(selectTimer);
   state.sleepAt = 0; state.sleepMin = 0; updateSleepBtn();
   state.selected = null; state.tuned = null;
+  stats.setListening(null);
   stopProgramme();
   refreshInfo();
 }
@@ -727,7 +763,9 @@ function renderGuide() {
     row.setAttribute('role', 'button'); row.tabIndex = 0;
     row.setAttribute('aria-label', `Tune to ${ch.name}`);
     const st = el('div', 'station');
-    st.append(el('b', null, ch.name), el('i', null, `${ch.kc} kc`), el('span', 'desc', ch.blurb));
+    const kcLine = el('i', null, `${ch.kc} kc`);
+    const lc = el('span', 'lcount'); lc.dataset.i = i; kcLine.append(lc);
+    st.append(el('b', null, ch.name), kcLine, el('span', 'desc', ch.blurb));
     const dc = describeChannel(ch);
     st.append(el('span', 'feat', dc.featuring));
     if (dc.era) st.append(el('span', 'era', dc.era));
@@ -740,6 +778,7 @@ function renderGuide() {
     row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
     rowsEl.append(row);
   });
+  updateGuideCounts();
 }
 function openGuide() {
   if (!state.channels.length) return;
@@ -906,7 +945,7 @@ function frame(t) {
   const sg = signalAt(state.p);
   const sig = state.on ? sg.sig : 0;
   const tuned = state.on && sg.d <= LOCK * 1.4 ? sg.i : null;
-  if (tuned !== state.tuned) { state.tuned = tuned; refreshInfo(); if (tuned !== null) { blip(0.25, 0.04, 700); updateMediaSession(); try { history.replaceState(null, '', '#' + state.channels[tuned].id); } catch { /* file:// or sandbox */ } } }
+  if (tuned !== state.tuned) { state.tuned = tuned; stats.setListening(tuned !== null ? state.channels[tuned].id : null); refreshInfo(); if (tuned !== null) { blip(0.25, 0.04, 700); updateMediaSession(); try { history.replaceState(null, '', '#' + state.channels[tuned].id); } catch { /* file:// or sandbox */ } } }
   syncSelection();
 
   const fade = state.sleepAt ? clamp((state.sleepAt - Date.now()) / 45000, 0, 1) : 1;   // slow fade-out before the timer ends

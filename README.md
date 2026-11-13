@@ -149,6 +149,12 @@ This is already done for yesterdial.com (Namecheap DNS pointing at GitHub Pages,
 The site is static; `docs/` is the whole thing. In the repository's Settings → Pages, set *Deploy from a branch*, branch `main`, folder `/docs`.
 Any push to `main` then republishes it. Opening `docs/index.html` straight from disk also works.
 
+## Live listener counts and visit stats (optional)
+
+`stats-worker/` is a small Cloudflare Worker that counts how many people are tuned in to each station right now (shown in the Program Guide, the dial tips,
+the control bar and a corner chip) and keeps simple anonymous visit stats on a private dashboard. It is switched off until `docs/stats-config.js` has a URL.
+See `stats-worker/README.md` for what it stores (no cookies, no personal data) and how to deploy it.
+
 ## A note on rights
 
 The older shows (1930s–50s) are mostly public domain or shared under Creative Commons. Some later ones on the dial are almost

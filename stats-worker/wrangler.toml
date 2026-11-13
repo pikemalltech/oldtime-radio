@@ -1,0 +1,16 @@
+name = "yesterdial-stats"
+main = "src/index.js"
+compatibility_date = "2025-03-01"
+
+# Pages allowed to open a live connection. Add your own domain here if it ever changes.
+[vars]
+ALLOWED_ORIGINS = "https://yesterdial.com,https://www.yesterdial.com,https://pikemalltech.github.io"
+
+[[durable_objects.bindings]]
+name = "STATS"
+class_name = "Stats"
+
+# SQLite-backed Durable Object (available on Cloudflare's free plan)
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Stats"]

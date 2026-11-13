@@ -321,6 +321,19 @@ body.hint-guide .mag-hint { opacity: .95; }
 .corner button:focus-visible, .corner a:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
 @media (max-width: 560px), (max-height: 480px) { .corner .full { display: none; } .corner .short { display: inline; } .corner button, .corner a { padding: 6px 11px; font-size: 13px; } }
 
+.corner .chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px 7px 11px; color: #f0d79b; font: 14px 'Old Standard TT', serif; white-space: nowrap; }
+.corner .chip[hidden] { display: none; }
+.corner .chip b { font-weight: 700; color: #fff2d6; font-variant-numeric: tabular-nums; }
+.corner .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: #7be08a; box-shadow: 0 0 7px 1px rgba(123, 224, 138, .8); }
+.corner .chip.live { animation: livedot 2.4s ease-in-out infinite; }
+@keyframes livedot { 50% { opacity: .78; } }
+@media (max-width: 560px), (max-height: 480px) { .corner .chip .full { display: none; } }
+.lcount { display: inline-block; margin-left: 8px; font: 11px 'Special Elite', monospace; letter-spacing: .04em; color: #7a6040; white-space: nowrap; }
+.lcount.on { color: var(--red); font-weight: 700; }
+.lcount[hidden] { display: none; }
+.dial-tip .who { display: block; margin-top: 6px; font: 700 12px 'Special Elite', monospace; color: var(--red); }
+@media (prefers-reduced-motion: reduce) { .corner .chip.live { animation: none; } }
+
 /* ---------- About card ---------- */
 .about { width: min(720px, 100%); }
 .about-body p { margin: 0 0 12px; font-size: 16.5px; line-height: 1.5; }

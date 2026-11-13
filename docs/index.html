@@ -177,6 +177,7 @@
 
 <!-- ===== corner links: About, and a donation link for the Internet Archive ===== -->
 <nav class="corner" aria-label="About Yesterdial and donating to the Internet Archive">
+  <span class="chip" id="listenChip" hidden><i class="dot" aria-hidden="true"></i><b id="listenN"></b><span class="full" id="listenWord"> listening</span></span>
   <button type="button" id="aboutBtn">About</button>
   <a class="donate" href="https://archive.org/donate" target="_blank" rel="noopener" title="Every recording on Yesterdial comes from the Internet Archive, a non-profit library">♥ <span class="full">Donate to the Internet Archive</span><span class="short">Donate</span></a>
 </nav>
@@ -245,6 +246,7 @@
 
       <h3>Good to know</h3>
       <p class="small">Many older programs are in the public domain or shared under Creative Commons licenses. Some later ones (such as <i>CBS Radio Mystery Theater</i>, <i>Mindwebs</i>, <i>Nightfall</i> and <i>The Price of Fear</i>) may still be under copyright and appear here only because they are on the Archive. If you hold the rights to a program and would like it removed from Yesterdial, please <a href="https://github.com/pikemalltech/oldtime-radio/issues" target="_blank" rel="noopener">open an issue</a>.</p>
+      <p class="small" id="aboutStats" hidden>Yesterdial counts visitors and listeners anonymously, so the Program Guide can show how many people are tuned in to each station. There are no cookies and no accounts: each browser tab gets a random ID that disappears when you close it, and nothing personal is stored.</p>
       <p class="small">The code behind Yesterdial is open source under the MIT license, on <a href="https://github.com/pikemalltech/oldtime-radio" target="_blank" rel="noopener">GitHub</a>.</p>
     </div>
   </section>
@@ -273,6 +275,8 @@
 <noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;color:#eee;font:18px Georgia,serif">Yesterdial needs JavaScript to run its radio. Turn it on and tune in to yesterday.</p></noscript>
 <audio id="player" preload="none"></audio>
 <script src="channels.js"></script>
+<script src="stats-config.js"></script>
+<script src="stats.js"></script>
 <script src="app.js" defer></script>
 </body>
 </html>
