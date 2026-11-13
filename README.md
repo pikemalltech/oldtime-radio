@@ -44,6 +44,7 @@ Seasons follow the northern hemisphere and US holidays. Edit `pick()` in `docs/s
 Mystery Theater 600 · **Baker Street Radio 676** · Rocket Radio 752 · Crime Beat 828 · Spies & Lawmen 904 · Adventure Hour 980 · Western Trail 1056 ·
 Laugh Parade 1132 · Sitcom Row 1208 · Showtime Variety 1284 · Radio Playhouse 1360 · The Home Front 1436 · Chiller Hour 1512 · **Bedtime Stories 1588**
 
+* **Mystery Theater** includes *The Shadow*: 200 episodes (1937–54) from a Public Domain item on archive.org, mixed into the loop, into the Halloween, Friday-the-13th and Christmas specials, and in its own Sunday-afternoon slot.
 * **Baker Street Radio** shuffles the Basil Rathbone/Nigel Bruce, Tom Conway and John Stanley radio dramas, and weaves in
   *The Hound of the Baskervilles* (a LibriVox reading) as a serial: one chapter at a time, in order, between the dramas.
 * **Bedtime Stories** plays fairy tales and fables at random (Grimm, Andersen, English fairy tales, Aesop, *Just So Stories*, Beatrix Potter)
@@ -78,6 +79,7 @@ over the start of a special is cut off, like a real station going to a scheduled
 | A Sherlock Holmes Christmas | Dec 20–26 | Baker Street Radio |
 | Christmas Bedtime Stories (*’Twas the Night Before Christmas*, then *A Christmas Carol* in five staves) | Dec 20–26 | Bedtime Stories |
 | Baker Street Book Club: *The Hound of the Baskervilles*, a complete reading from chapter 1 | Fridays 8 pm–2 am | Baker Street Radio |
+| The Shadow Knows (Lamont Cranston and the Shadow, 1937–54) | Sundays 5:30–7:30 pm | Mystery Theater |
 | Sunday Night Suspense | Sundays 8–11 pm | Mystery Theater |
 | Sunday Night with Jack Benny | Sundays 7–9 pm | Laugh Parade |
 | Saturday Night Roundup (Gunsmoke) | Saturdays 7–10 pm | Western Trail |

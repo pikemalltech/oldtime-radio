@@ -22,11 +22,14 @@ const MIN_SECONDS = 14 * 60;           // skip fragments, promos, single "acts"
 const MAX_SECONDS = 62 * 60;
 
 // ---------- the shows (archive.org item id -> display name) ----------
+// The Shadow, 1937-1954: 200+ episodes, marked Public Domain on archive.org (uploaded by AcousticMonster).
+const SHADOW = 'the-shadow-radio-show-1937-1954-old-time-radio-all-available-episodes';
 const SHOWS = {
   OTRR_Suspense_Singles: 'Suspense',
   OTRR_Inner_Sanctum_Mysteries_Singles: 'Inner Sanctum Mysteries',
   OTRR_Whistler_Singles: 'The Whistler',
   OTRR_Mysterious_Traveler_Singles: 'The Mysterious Traveler',
+  [SHADOW]: 'The Shadow',
   OTRR_X_Minus_One_Singles: 'X Minus One',
   OTRR_Dimension_X_Singles: 'Dimension X',
   OTRR_Dark_Fantasy_Singles: 'Dark Fantasy',
@@ -108,6 +111,7 @@ const SHOWS = {
 //   note      shown instead of a year           noYear   don't guess a year from the file name
 const LV = { min: 120, max: 90 * 60, note: 'LibriVox', noYear: true };
 const OPTS = {
+  [SHADOW]: { exclude: /LP Record|Documentary|Radio Documentary/i },       // the item also holds an LP and a 1985 documentary
   hound_baskervilles_librivox: { ...LV, ordered: true },
   grimms_english_librivox: { ...LV, max: 30 * 60 },
   andersens_fairytales_librivox: { ...LV, max: 40 * 60 },
@@ -143,7 +147,7 @@ function tidyTitle(t) {
 // kc = position on the dial (AM band, 540-1600 kc). Keep them ~85 kc apart.
 const CHANNELS = [
   { id: 'mystery', name: 'Mystery Theater', short: 'MYSTERY', kc: 600, blurb: 'Suspense, whodunits and things that go bump.',
-    sources: ['OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles'] },
+    sources: ['OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW] },
   { id: 'sherlock', name: 'Baker Street Radio', short: 'HOLMES', kc: 676, blurb: 'The world’s only consulting detective, on the air and on the page.', count: 60,
     sources: ['sherlockholmes_otr', 'HQSherlockConwayTCS', ['tcssherlockholmesjohnstanleyhq', 'tcssherlockholmesjohnstanleyhq2'], 'hound_baskervilles_librivox'] },
   { id: 'scifi', name: 'Rocket Radio', short: 'SCI-FI', kc: 752, blurb: 'Tomorrow, as imagined yesterday.',
@@ -187,11 +191,11 @@ const SCARY = 'ghost|haunt|horror|halloween|witch|vampire|werewolf|monster|zombi
 const SPECIALS = [
   // holidays first: they win over weekly slots
   { id: 'fri13', title: 'Friday the 13th Fright Night', blurb: 'All day long. Don’t listen alone.', rule: { type: 'friday13' }, channel: 'chills', filter: SCARY, count: 20,
-    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles'] },
+    sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'OTRR_Suspense_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW, 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles'] },
   { id: 'halloween', title: 'Halloween Week of Horrors', blurb: 'Seven nights of the spookiest broadcasts on the dial.', rule: { type: 'range', from: '10-25', to: '10-31' }, channel: 'chills', filter: SCARY, count: 24,
     sources: ['OTRR_Escape_Singles', 'OTRR_Weird_Circle_Singles', 'OTRR_Sealed_Book_Singles', 'LightsOutoldTimeRadio', 'Quiet_Please', 'OTRR_Dark_Fantasy_Singles', 'OTRR_Suspense_Singles'] },
   { id: 'halloween-mystery', title: 'Halloween Week of Horrors', blurb: 'Seven nights of Inner Sanctum and Suspense at their creepiest.', rule: { type: 'range', from: '10-25', to: '10-31' }, channel: 'mystery', filter: SCARY, count: 24,
-    sources: ['OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles'] },
+    sources: ['OTRR_Inner_Sanctum_Mysteries_Singles', 'OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Mysterious_Traveler_Singles', SHADOW] },
   { id: 'xmas-comedy', title: 'Christmas on the Radio', blurb: 'Holiday episodes, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'comedy', filter: XMAS, count: 24,
     sources: ['Otrr_The_Great_Gildersleeve_Singles', 'OTRR_Harris_Faye_Singles', 'OTRR_Jack_Benny_Singles_1949-1950'] },
   { id: 'xmas-sitcom', title: 'Christmas on the Radio', blurb: 'Holiday episodes, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'sitcom', filter: XMAS, count: 24,
@@ -199,7 +203,7 @@ const SPECIALS = [
   { id: 'xmas-playhouse', title: 'Christmas on the Radio', blurb: 'Holiday dramas, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'playhouse', filter: XMAS, count: 16,
     sources: ['OTRR_Lux_Radio_Theater_Singles', 'OTRR_Cavalcade_of_America_Singles', 'OTRR_Family_Theater_Singles', 'OTRR_Broadway_Is_My_Beat_Singles'] },
   { id: 'xmas-mystery', title: 'Christmas on the Radio', blurb: 'Yuletide suspense, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'mystery', filter: XMAS, count: 12,
-    sources: ['OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles'] },
+    sources: ['OTRR_Suspense_Singles', 'OTRR_Whistler_Singles', 'OTRR_Inner_Sanctum_Mysteries_Singles', SHADOW] },
   { id: 'xmas-western', title: 'Christmas on the Radio', blurb: 'Christmas on the frontier, December 20–26.', rule: { type: 'range', from: '12-20', to: '12-26' }, channel: 'western', filter: XMAS, count: 12,
     sources: ['OTRR_Gunsmoke_Singles', 'OTRR_LoneRanger_Singles', 'OTRR_The_Six_Shooter_Singles'] },
   { id: 'july4', title: 'Fourth of July Celebration', blurb: 'Stories of liberty and the nation’s founding, July 1–4.', rule: { type: 'range', from: '07-01', to: '07-04' }, channel: 'history',
@@ -215,6 +219,8 @@ const SPECIALS = [
   // weekly appointment listening
   { id: 'hound-reading', title: 'Baker Street Book Club: The Hound of the Baskervilles', blurb: 'A complete reading, from the first knock at the door to the last chapter on the moor.', rule: { type: 'weekly', days: [5], from: '20:00', to: '02:00' }, channel: 'sherlock', count: 15,
     sources: ['hound_baskervilles_librivox'] },
+  { id: 'shadow-knows', title: 'The Shadow Knows', blurb: 'Lamont Cranston and the Shadow, from 1937 to 1954. Who knows what evil lurks in the hearts of men?', rule: { type: 'weekly', days: [0], from: '17:30', to: '19:30' }, channel: 'mystery', count: 8,
+    sources: [SHADOW] },
   { id: 'sunday-suspense', title: 'Sunday Night Suspense', blurb: 'An hour or three of radio’s most celebrated thriller series.', rule: { type: 'weekly', days: [0], from: '20:00', to: '23:00' }, channel: 'mystery', count: 8,
     sources: ['OTRR_Suspense_Singles'] },
   { id: 'sunday-benny', title: 'Sunday Night with Jack Benny', blurb: 'Jack, Mary, Rochester and the Phil Harris band.', rule: { type: 'weekly', days: [0], from: '19:00', to: '21:00' }, channel: 'comedy', count: 8,
@@ -324,6 +330,7 @@ async function loadSource(src) {
   const byBase = new Map();                                              // one file per recording
   for (const f of meta.files || []) {
     if (!/\.mp3$/i.test(f.name || '') || !/mp3/i.test(f.format || '')) continue;
+    if (o.exclude && o.exclude.test(rawName(f))) continue;
     const dur = secs(f.length);
     if (!(dur >= min && dur <= max)) continue;
     const base = f.name.replace(/\.mp3$/i, '').toLowerCase().replace(/[_-]?64kb$/, '');
