@@ -696,7 +696,7 @@ guideEl.addEventListener('click', (e) => { if (e.target === guideEl) closeGuide(
 // ---------------------------------------------------------------- the first-visit tour
 // Shown once (remembered in localStorage). The Help button or the H key replays it; ?tour=1 forces it, ?tour=0 suppresses it.
 const TOUR = [
-  { title: 'Welcome to Yesterdial', text: 'Fifteen stations of old-time radio are on the air right now: <b>mystery, The Shadow, Sherlock Holmes, comedy, sci-fi, westerns and bedtime stories</b>. Here is a 30-second tour of the radio.', next: 'Show me around', skip: 'Skip' },
+  { title: 'Welcome to Yesterdial', list: true, text: () => `Yesterdial is a 1940s radio with <b>${numberWord(state.channels.length).toLowerCase()} stations</b> of old-time radio on the air right now:`, after: 'Here is a 30-second tour of the radio.', next: 'Show me around', skip: 'Skip' },
   { target: ['#knobPower'], title: 'Switch it on', text: 'Click the <b>POWER</b> knob. The tubes need a moment to warm up. (Browsers stay silent until you click something, so the sound starts with this click.)' },
   { target: ['#dial', '#knobTune'], title: 'Tune in', text: 'Click a <b>station name</b> on the dial, or drag the big <b>TUNING</b> knob (or scroll over the radio). When the red needle sits on a station and the green eye narrows, you are locked on. Between stations you will hear static. <kbd>←</kbd> <kbd>→</kbd> fine-tune; <kbd>↑</kbd> <kbd>↓</kbd> jump a station.' },
   { target: ['#magazine'], title: 'Read the Radio Guide', text: 'Click the <b>magazine</b> to see what is on <b>now, next and later</b> on every station, plus special broadcasts like Sunday Night Suspense, Friday the 13th and Christmas week.' },
@@ -705,6 +705,8 @@ const TOUR = [
 ];
 const tourEl = $('#tour'), tourCard = $('#tourCard'), tourRing = $('#tourRing');
 let tourStep = 0, tourFocus = null;
+const NUMBER_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
+const numberWord = (n) => NUMBER_WORDS[n] || String(n);
 const tourOpen = () => !tourEl.hidden;
 
 function tourRect(sels) {
@@ -722,7 +724,14 @@ function renderTour() {
   const step = TOUR[tourStep], last = tourStep === TOUR.length - 1;
   $('#tourStep').textContent = tourStep === 0 || last ? 'Yesterdial · tune in to yesterday' : `Step ${tourStep} of ${TOUR.length - 2}`;
   $('#tourTitle').textContent = step.title;
-  $('#tourText').innerHTML = step.text;                      // our own constant strings only
+  $('#tourText').innerHTML = typeof step.text === 'function' ? step.text() : step.text;   // our own constant strings only
+  const list = $('#tourList'), after = $('#tourAfter');
+  list.hidden = !step.list;
+  if (step.list) {                                           // every station, by its proper name, straight from the station data
+    list.replaceChildren(...state.channels.map((ch) => { const li = el('li', null, ch.name); li.append(el('small', null, `${ch.short} · ${ch.kc} kc`)); return li; }));
+  }
+  after.hidden = !step.after; after.textContent = step.after || '';
+  tourCard.classList.toggle('wide', !!step.list);
   $('#tourDots').replaceChildren(...TOUR.map((_, i) => el('i', i === tourStep ? 'on' : '')));
   $('#tourNext').textContent = step.next || 'Next';
   $('#tourSkip').textContent = step.skip || 'Skip tour';
