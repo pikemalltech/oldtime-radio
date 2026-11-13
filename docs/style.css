@@ -281,13 +281,15 @@ body.hint-guide .mag-hint { opacity: .95; }
 .sp .blurb { display: block; font-size: 12px; opacity: .75; margin-top: 1px; }
 .row .spec { display: block; margin-top: 7px; font: 700 11px/1.25 'Special Elite', monospace; color: var(--red); }
 .rows { display: block; }
-.row { display: grid; grid-template-columns: 150px 1.35fr 1fr 1fr; gap: 14px; width: 100%; text-align: left; padding: 12px 10px; background: transparent; border: 0; border-bottom: 1px dotted rgba(42, 27, 16, .55); color: inherit; cursor: pointer; position: relative; font-family: inherit; }
+.row { display: grid; grid-template-columns: 232px 1.25fr 1fr 1fr; gap: 14px; width: 100%; text-align: left; padding: 12px 10px; background: transparent; border: 0; border-bottom: 1px dotted rgba(42, 27, 16, .55); color: inherit; cursor: pointer; position: relative; font-family: inherit; }
 .row:hover { background: rgba(155, 29, 29, .08); }
 .row:focus-visible { outline: 3px solid var(--red); outline-offset: -3px; }
 .row.tuned { background: rgba(155, 29, 29, .1); box-shadow: inset 5px 0 0 var(--red); }
 .row .station b { display: block; font: 700 17px 'Old Standard TT', serif; letter-spacing: .06em; text-transform: uppercase; }
 .row .station i { display: block; font: 12px 'Special Elite', monospace; margin-top: 2px; }
-.row .station em { display: block; font-size: 12px; margin-top: 6px; opacity: .8; }
+.row .station .desc { display: block; margin-top: 6px; font: italic 14px/1.3 'Old Standard TT', serif; }
+.row .station .feat { display: block; margin-top: 5px; font: 12px/1.35 'Old Standard TT', serif; color: #5a4630; }
+.row .station .era { display: block; margin-top: 3px; font: 11px 'Special Elite', monospace; letter-spacing: .04em; color: #7a6040; }
 .row .tunedtag { color: var(--red); font: 700 11px 'Special Elite', monospace; letter-spacing: .1em; }
 .slot .t { display: block; font: 12px 'Special Elite', monospace; color: #6a5638; }
 .slot.now .t { color: var(--red); font-weight: 700; }
@@ -304,8 +306,8 @@ body.hint-guide .mag-hint { opacity: .95; }
   .row:hover { background: transparent; }
   .row.tuned:hover { background: rgba(155, 29, 29, .1); }
   .row { grid-template-columns: 1fr 1fr; gap: 8px 12px; }
-  .row .station { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-  .row .station em { display: none; }
+  .row .station { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 3px 10px; flex-wrap: wrap; }
+  .row .station .desc, .row .station .feat, .row .station .era { flex-basis: 100%; margin-top: 2px; }
   .row .slot.later { display: none; }
 }
 

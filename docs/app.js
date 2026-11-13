@@ -700,6 +700,23 @@ function renderSpecials() {
   box.append(grid);
 }
 
+// What a station carries, worked out from its own lineup so it can never go stale: the most-played shows, and the years covered.
+// Shows are separated by "·" because some titles contain commas ("Have Gun, Will Travel").
+function describeChannel(ch) {
+  const counts = new Map();
+  let y0 = 9999, y1 = 0;
+  for (const e of ch.episodes) {
+    counts.set(e.s, (counts.get(e.s) || 0) + 1);
+    if (e.y) { y0 = Math.min(y0, e.y); y1 = Math.max(y1, e.y); }
+  }
+  const shows = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([s]) => s);
+  const top = shows.slice(0, 5), more = shows.length - top.length;
+  return {
+    featuring: 'Featuring ' + top.join(' · ') + (more > 0 ? ` · and ${more} more` : ''),
+    era: y1 ? `Recorded ${y1 > y0 ? `${y0}–${y1}` : y0}` : '',
+  };
+}
+
 function renderGuide() {
   renderSpecials();
   $('#guideClock').textContent = new Date().toLocaleString([], { weekday: 'long', hour: 'numeric', minute: '2-digit' });
@@ -709,7 +726,10 @@ function renderGuide() {
     row.setAttribute('role', 'button'); row.tabIndex = 0;
     row.setAttribute('aria-label', `Tune to ${ch.name}`);
     const st = el('div', 'station');
-    st.append(el('b', null, ch.name), el('i', null, `${ch.kc} kc`), el('em', null, ch.blurb));
+    st.append(el('b', null, ch.name), el('i', null, `${ch.kc} kc`), el('span', 'desc', ch.blurb));
+    const dc = describeChannel(ch);
+    st.append(el('span', 'feat', dc.featuring));
+    if (dc.era) st.append(el('span', 'era', dc.era));
     if (state.on && state.tuned === i) st.append(el('span', 'tunedtag', '◉ TUNED IN'));
     const n0 = nowPlaying(i), n1 = scheduleAt(i, n0.end + 500), n2 = scheduleAt(i, n1.end + 500);
     if (n0.special) st.append(el('span', 'spec', '★ ' + n0.special.title));
