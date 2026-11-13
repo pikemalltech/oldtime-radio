@@ -165,6 +165,47 @@ addEventListener('resize', layout);
 addEventListener('load', layout);
 layout();
 
+// ---------------------------------------------------------------- hover tip for the dial's station names
+// Shows the station's full name, dial position, a description, and what is on the air there right now.
+// Mouse: hover. Keyboard: focus. Touch: a tap shows it for a few seconds while the tap tunes in.
+const dialTip = $('#dialTip');
+let tipTimer = 0, tipTick = 0, tipAuto = 0;
+function fillTip(i) {
+  const ch = state.channels[i], np = nowPlaying(i);
+  const name = el('b', null, ch.name);
+  const kc = el('span', 'kc', `${ch.kc} kc · “${ch.short}” on the dial`);
+  const blurb = el('span', 'blurb', ch.blurb);
+  const now = el('span', 'now'); now.append(el('em', null, 'On the air now'), document.createTextNode(`${np.ep.s}: ${epLine(np.ep)}`));
+  const parts = [name, kc, blurb, now];
+  if (np.special) parts.push(el('span', 'special', `★ ${np.special.title}`));
+  parts.push(el('span', 'go', state.on && state.tuned === i ? '◉ You are tuned in' : 'Click to tune in'));
+  dialTip.replaceChildren(...parts);
+}
+function placeTip(btn) {
+  const r = btn.getBoundingClientRect(), w = dialTip.offsetWidth, h = dialTip.offsetHeight, m = 8;
+  const left = clamp((r.left + r.right) / 2 - w / 2, m, innerWidth - w - m);
+  const below = r.bottom + 10, above = r.top - h - 10;
+  dialTip.style.left = left + 'px';
+  dialTip.style.top = (below + h <= innerHeight - m ? below : Math.max(m, above)) + 'px';
+}
+function showTip(btn, how) {
+  if (tourOpen()) return;
+  clearTimeout(tipTimer); clearTimeout(tipAuto);
+  tipTimer = setTimeout(() => {
+    const i = +btn.dataset.i;
+    fillTip(i); dialTip.hidden = false; placeTip(btn);
+    requestAnimationFrame(() => dialTip.classList.add('show'));
+    clearInterval(tipTick); tipTick = setInterval(() => { fillTip(i); placeTip(btn); }, 1000);   // keeps "on now" fresh
+    if (how === 'touch') tipAuto = setTimeout(hideTip, 3500);
+  }, how === 'touch' ? 0 : 150);
+}
+function hideTip() {
+  clearTimeout(tipTimer); clearInterval(tipTick); clearTimeout(tipAuto);
+  dialTip.classList.remove('show'); dialTip.hidden = true;
+}
+addEventListener('resize', hideTip);
+addEventListener('scroll', hideTip, true);
+
 // ---------------------------------------------------------------- dial construction
 const dialEl = $('#dial'), scaleEl = $('#dialScale'), needle = $('#needle');
 const stripA = $('#stripA'), stripB = $('#stripB');
@@ -190,7 +231,11 @@ function buildDial() {
     const b = el('button', 'st', ch.short);
     b.style.left = dialX(state.sp[i]) + 'rem';
     b.style.top = [64, 94, 124][i % 3] + 'rem';          // three staggered rows keep the names big and apart
-    b.setAttribute('aria-label', `Tune to ${ch.name}, ${ch.kc} kilocycles`);
+    b.setAttribute('aria-label', `Tune to ${ch.name}, ${ch.kc} kilocycles. ${ch.blurb}`);
+    b.addEventListener('pointerenter', (e) => showTip(b, e.pointerType));
+    b.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') hideTip(); });   // touch: let the timer hide it
+    b.addEventListener('focus', () => { if (b.matches(':focus-visible')) showTip(b, 'key'); });   // keyboard focus only; a tap also focuses
+    b.addEventListener('blur', hideTip);
     b.dataset.i = i;
     b.addEventListener('click', () => goTo(i));
     scaleEl.append(b);
@@ -593,7 +638,7 @@ $('#shareBtn').addEventListener('click', shareStation);
 $('#zoomBtn').addEventListener('click', () => setLean(!state.lean));
 $('#hStation').addEventListener('click', openGuide);                       // tap the station name for the full station list
 
-// ---------------------------------------------------------------- the Radio Guide
+// ---------------------------------------------------------------- the Program Guide
 const guideEl = $('#guide'), rowsEl = $('#guideRows');
 let guideTimer = 0, lastFocus = null;
 
@@ -698,8 +743,8 @@ guideEl.addEventListener('click', (e) => { if (e.target === guideEl) closeGuide(
 const TOUR = [
   { title: 'Welcome to Yesterdial', list: true, text: () => `Yesterdial is a 1940s radio with <b>${numberWord(state.channels.length).toLowerCase()} stations</b> of old-time radio on the air right now:`, after: 'Here is a 30-second tour of the radio.', next: 'Show me around', skip: 'Skip' },
   { target: ['#knobPower'], title: 'Switch it on', text: 'Click the <b>POWER</b> knob. The tubes need a moment to warm up. (Browsers stay silent until you click something, so the sound starts with this click.)' },
-  { target: ['#dial', '#knobTune'], title: 'Tune in', text: 'Click a <b>station name</b> on the dial, or drag the big <b>TUNING</b> knob (or scroll over the radio). When the red needle sits on a station and the green eye narrows, you are locked on. Between stations you will hear static. <kbd>←</kbd> <kbd>→</kbd> fine-tune; <kbd>↑</kbd> <kbd>↓</kbd> jump a station.' },
-  { target: ['#magazine'], title: 'Read the Radio Guide', text: 'Click the <b>magazine</b> to see what is on <b>now, next and later</b> on every station, plus special broadcasts like Sunday Night Suspense, Friday the 13th and Christmas week.' },
+  { target: ['#dial', '#knobTune'], title: 'Tune in', text: 'Click a <b>station name</b> on the dial, or drag the big <b>TUNING</b> knob (or scroll over the radio). <b>Hover over a station name</b> for a description and what is on now. When the red needle sits on a station and the green eye narrows, you are locked on. Between stations you will hear static. <kbd>←</kbd> <kbd>→</kbd> fine-tune; <kbd>↑</kbd> <kbd>↓</kbd> jump a station.' },
+  { target: ['#magazine'], title: 'Read the Program Guide', text: 'Click the <b>magazine</b> to see what is on <b>now, next and later</b> on every station, plus special broadcasts like Sunday Night Suspense, Friday the 13th and Christmas week.' },
   { target: ['#hud'], title: 'A few more things', text: 'Use ◀ ▶ to change station, 🌙 for a <b>sleep timer</b>, 🔗 to <b>share</b> a station, and 🔍 to <b>lean in</b> for a closer look at the dial. Tap the station name for the full list. The room redecorates itself with the seasons.' },
   { title: 'That’s all there is to it', text: 'Every station follows the clock, so everyone listening hears the same show at the same moment, just like real radio. The help button <b>❓</b> brings this tour back any time.', next: 'Switch on the radio', back: 'Back', skip: 'Just look around', last: true },
 ];
@@ -758,6 +803,7 @@ function positionTour() {
 }
 
 function openTour(from = 0) {
+  hideTip();
   tourFocus = document.activeElement; tourStep = from;
   if (!$('#guide').hidden) closeGuide();
   tourEl.hidden = false;

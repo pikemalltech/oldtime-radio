@@ -217,7 +217,7 @@ body.on.playing .grille .cloth { animation: hum 1.4s infinite linear; }
 .magazine { left: 372rem; bottom: 128rem; width: 120rem; height: 160rem; transform: rotate(-6deg); transform-origin: 50% 100%; z-index: 4; border: 0; padding: 8rem; cursor: pointer; text-align: center;
   background: linear-gradient(105deg, #f2e7c8, #e3d4ac); box-shadow: 0 10rem 16rem rgba(0, 0, 0, .55), inset 3rem 0 6rem rgba(0, 0, 0, .15); color: #2a1b10; transition: transform .25s, box-shadow .25s; }
 .magazine:hover, .magazine:focus-visible { transform: rotate(-3deg) translateY(-8rem); box-shadow: 0 18rem 22rem rgba(0, 0, 0, .6), 0 0 0 3rem rgba(255, 210, 120, .7); outline: none; }
-.magazine .mast { display: block; font: 22rem/0.95 'Limelight', serif; color: #b02121; letter-spacing: 1rem; border-bottom: 3rem double #2a1b10; padding-bottom: 5rem; }
+.magazine .mast { display: block; font: 17rem/1 'Limelight', serif; color: #b02121; letter-spacing: .6rem; border-bottom: 3rem double #2a1b10; padding-bottom: 5rem; }
 .magazine .art { position: relative; display: block; height: 62rem; margin-top: 6rem; background: radial-gradient(circle at 50% 120%, #d0703a, #f2c46d 60%, #f2e7c8 62%); border: 2rem solid #2a1b10; overflow: hidden; }
 .magazine .mic { position: absolute; left: 50%; top: 10rem; width: 18rem; height: 28rem; margin-left: -9rem; border-radius: 9rem; background: repeating-linear-gradient(0deg, #2a1b10 0 2rem, #6a5a40 2rem 4rem); }
 .magazine .mic::after { content: ""; position: absolute; left: 50%; top: 26rem; width: 3rem; height: 24rem; margin-left: -1.5rem; background: #2a1b10; }
@@ -255,7 +255,7 @@ body.hint-guide .mag-hint { opacity: .95; }
 .toast { position: fixed; left: 50%; bottom: calc(var(--hudh, 60px) + 26px); transform: translate(-50%, 10px); z-index: 30; max-width: min(92vw, 520px); padding: 9px 16px; border-radius: 10px; background: rgba(20, 12, 7, .94); border: 1px solid rgba(201, 164, 92, .6); color: #f4e7c3; font: 14px 'Old Standard TT', serif; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; text-align: center; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ---------- the Radio Guide ---------- */
+/* ---------- the Program Guide ---------- */
 .guide-back { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10, 5, 2, .74); backdrop-filter: blur(3px); overflow: auto; }
 .guide-back[hidden] { display: none; }
 .paper { position: relative; width: min(1000px, 100%); max-height: 100%; overflow: auto; padding: 22px 28px 20px; color: var(--ink);
@@ -308,6 +308,21 @@ body.hint-guide .mag-hint { opacity: .95; }
   .row .station em { display: none; }
   .row .slot.later { display: none; }
 }
+
+/* ---------- hover tip on the dial's station names ---------- */
+.dial-tip { position: fixed; z-index: 25; width: max-content; max-width: min(280px, 90vw); padding: 10px 13px 9px; pointer-events: none; color: var(--ink); border: 2px solid #3a2a1a; border-radius: 3px;
+  background: radial-gradient(ellipse at 20% 10%, rgba(255, 255, 255, .5), transparent 60%), #efe3c5; box-shadow: 0 10px 26px rgba(0, 0, 0, .6), inset 0 0 18px rgba(120, 80, 30, .2);
+  opacity: 0; transform: translateY(4px); transition: opacity .14s, transform .14s; }
+.dial-tip.show { opacity: 1; transform: none; }
+.dial-tip[hidden] { display: none; }
+.dial-tip b { display: block; font: 700 16px/1.2 'Old Standard TT', serif; }
+.dial-tip .kc { display: block; margin-top: 1px; font: 11px 'Special Elite', monospace; letter-spacing: .08em; color: #7a6040; text-transform: uppercase; }
+.dial-tip .blurb { display: block; margin-top: 5px; font: italic 14px/1.35 'Old Standard TT', serif; }
+.dial-tip .now { display: block; margin-top: 7px; padding-top: 6px; border-top: 1px dotted rgba(42, 27, 16, .5); font: 13.5px/1.3 'Old Standard TT', serif; }
+.dial-tip .now em { font-style: normal; font: 700 10.5px 'Special Elite', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 1px; }
+.dial-tip .special { display: block; margin-top: 3px; font: 700 11.5px 'Special Elite', monospace; color: var(--red); }
+.dial-tip .go { display: block; margin-top: 6px; font: 11px 'Special Elite', monospace; color: #7a6040; }
+@media (prefers-reduced-motion: reduce) { .dial-tip { transition: none; } }
 
 /* ---------- the first-visit tour ---------- */
 .tour { position: fixed; inset: 0; z-index: 60; }

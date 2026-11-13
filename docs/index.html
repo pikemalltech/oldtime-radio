@@ -157,9 +157,9 @@
       <div class="base"></div>
     </div>
 
-    <!-- the Radio Guide magazine, leaning on the radio -->
-    <button class="magazine" id="magazine" aria-label="Open the Radio Guide: tonight's listings">
-      <span class="mast">RADIO<br>GUIDE</span>
+    <!-- the Program Guide magazine, leaning on the radio -->
+    <button class="magazine" id="magazine" aria-label="Open the Program Guide: tonight's listings">
+      <span class="mast">PROGRAM<br>GUIDE</span>
       <span class="art"><i class="mic"></i><i class="waves"></i></span>
       <span class="tag">TONIGHT'S<br>PROGRAMS</span>
       <span class="price">10¢</span>
@@ -190,17 +190,18 @@
   <button class="hbtn wide" id="shareBtn" title="Copy a link to this station">🔗 <span>Share</span></button>
   <label class="hvol"><span class="sr">Volume</span>🔈<input id="volRange" type="range" min="0" max="100" value="70"></label>
   <button class="hbtn wide" id="helpBtn" title="How to use Yesterdial (H)">❓ <span>Help</span></button>
-  <button class="hbtn wide" id="guideBtn">📖 <span>Guide</span></button>
+  <button class="hbtn wide" id="guideBtn" title="Open the Program Guide (G)">📖 <span>Guide</span></button>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="dial-tip" id="dialTip" role="tooltip" hidden></div>
 
-<!-- ===== the Radio Guide ===== -->
+<!-- ===== the Program Guide ===== -->
 <div class="guide-back" id="guide" hidden>
   <section class="paper" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
     <button class="close" id="guideClose" aria-label="Close the guide">✕</button>
     <header>
       <p class="kicker">Your complete listing of tonight's programs</p>
-      <h2 id="guideTitle">RADIO GUIDE</h2>
+      <h2 id="guideTitle">PROGRAM GUIDE</h2>
       <p class="sub"><span id="guideClock"></span> &nbsp;·&nbsp; Tap a station to tune in</p>
     </header>
     <div class="specials" id="guideSpecials" hidden></div>
