@@ -1,7 +1,7 @@
 {
   "name": "Yesterdial",
   "short_name": "Yesterdial",
-  "description": "Turn the dial on a 1940s radio: 15 stations of old-time mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, streamed from the Internet Archive.",
+  "description": "Turn the dial on a 1940s radio: 15 stations of mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, via the Internet Archive.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
