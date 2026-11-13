@@ -568,9 +568,10 @@ $('#nextBtn').addEventListener('click', () => stepStation(1));
 addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (tourOpen()) return;
-  const inGuide = !$('#guide').hidden;
+  const inGuide = !$('#guide').hidden, inAbout = !aboutEl.hidden;
+  if (e.key === 'Escape' && inAbout) { closeAbout(); return; }
   if (e.key === 'Escape' && inGuide) { closeGuide(); return; }
-  if (inGuide) return;
+  if (inGuide || inAbout) return;
   if (e.target.closest && e.target.closest('input,textarea,select,[role=slider]')) return;
   const onButton = e.target.closest && e.target.closest('button,a,[role=button]');
   if ((e.key === ' ' || e.key === 'Enter') && !onButton) { togglePower(); e.preventDefault(); }
@@ -753,6 +754,18 @@ function closeGuide() {
   guideEl.hidden = true; clearInterval(guideTimer);
   if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
+const aboutEl = $('#about');
+let aboutFocus = null;
+function openAbout() {
+  hideTip(); aboutFocus = document.activeElement;
+  if (!$('#guide').hidden) closeGuide();
+  aboutEl.hidden = false; aboutEl.querySelector('.paper').scrollTop = 0;
+  $('#aboutClose').focus();
+}
+function closeAbout() { aboutEl.hidden = true; if (aboutFocus && aboutFocus.focus) aboutFocus.focus(); }
+$('#aboutBtn').addEventListener('click', openAbout);
+$('#aboutClose').addEventListener('click', closeAbout);
+aboutEl.addEventListener('click', (e) => { if (e.target === aboutEl) closeAbout(); });
 $('#magazine').addEventListener('click', openGuide);
 $('#guideBtn').addEventListener('click', openGuide);
 $('#guideClose').addEventListener('click', closeGuide);
@@ -766,7 +779,7 @@ const TOUR = [
   { target: ['#dial', '#knobTune'], title: 'Tune in', text: 'Click a <b>station name</b> on the dial, or drag the big <b>TUNING</b> knob (or scroll over the radio). <b>Hover over a station name</b> for a description and what is on now. When the red needle sits on a station and the green eye narrows, you are locked on. Between stations you will hear static. <kbd>←</kbd> <kbd>→</kbd> fine-tune; <kbd>↑</kbd> <kbd>↓</kbd> jump a station.' },
   { target: ['#magazine'], title: 'Read the Program Guide', text: 'Click the <b>magazine</b> to see what is on <b>now, next and later</b> on every station, plus special broadcasts like Sunday Night Suspense, Friday the 13th and Christmas week.' },
   { target: ['#hud'], title: 'A few more things', text: 'Use ◀ ▶ to change station, 🌙 for a <b>sleep timer</b>, 🔗 to <b>share</b> a station, and 🔍 to <b>lean in</b> for a closer look at the dial. Tap the station name for the full list. The room redecorates itself with the seasons.' },
-  { title: 'That’s all there is to it', text: 'Every station follows the clock, so everyone listening hears the same show at the same moment, just like real radio. The help button <b>❓</b> brings this tour back any time.', next: 'Switch on the radio', back: 'Back', skip: 'Just look around', last: true },
+  { title: 'That’s all there is to it', text: 'Every station follows the clock, so everyone listening hears the same show at the same moment, just like real radio. The help button <b>❓</b> brings this tour back any time. And every recording comes from the Internet Archive, a non-profit library: <a href="https://archive.org/donate" target="_blank" rel="noopener">please consider supporting it</a>.', next: 'Switch on the radio', back: 'Back', skip: 'Just look around', last: true },
 ];
 const tourEl = $('#tour'), tourCard = $('#tourCard'), tourRing = $('#tourRing');
 let tourStep = 0, tourFocus = null;
@@ -824,6 +837,7 @@ function positionTour() {
 
 function openTour(from = 0) {
   hideTip();
+  if (!aboutEl.hidden) closeAbout();
   tourFocus = document.activeElement; tourStep = from;
   if (!$('#guide').hidden) closeGuide();
   tourEl.hidden = false;

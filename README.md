@@ -14,6 +14,7 @@ straight from the [Internet Archive](https://archive.org/details/oldtimeradio). 
 * **Tuning**: drag the big knob, scroll over the radio, press ← → (Shift for bigger steps), or click a station name on the dial.
   Hover over (or keyboard-focus) a station name on the dial for a tip with its full name, a description, and what is on the air there right now.
   Between stations you hear static and a heterodyne whistle; the green "magic eye" narrows as you lock on.
+* **About** (top-right corner): who made the shows possible, with thanks to the Internet Archive, the Old Time Radio Researchers and LibriVox, and a **Donate to the Internet Archive** button. The same donation link is in the corner, in the Program Guide footer and on the last step of the tour.
 * **Program Guide** (the magazine on the sideboard, or press `G`): *Special Broadcasts* coming up, plus what is on now / next / later on every station. Each station lists a description, the shows it carries and the years covered (worked out from its lineup, so it stays accurate).
 * **Share** (🔗): copies a link such as `index.html#crime` that opens with the dial set to that station (the visitor
   still has to click Power, because browsers block autoplay). Station ids: `mystery shadow sherlock scifi crime spies adventure western comedy sitcom variety playhouse history chills bedtime`.

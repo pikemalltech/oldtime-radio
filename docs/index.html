@@ -175,6 +175,12 @@
   <div class="glow" id="glow"></div>
 </div>
 
+<!-- ===== corner links: About, and a donation link for the Internet Archive ===== -->
+<nav class="corner" aria-label="About Yesterdial and donating to the Internet Archive">
+  <button type="button" id="aboutBtn">About</button>
+  <a class="donate" href="https://archive.org/donate" target="_blank" rel="noopener" title="Every recording on Yesterdial comes from the Internet Archive, a non-profit library">♥ <span class="full">Donate to the Internet Archive</span><span class="short">Donate</span></a>
+</nav>
+
 <!-- ===== control bar (accessible, mobile friendly) ===== -->
 <div class="hud" id="hud">
   <button class="hbtn" id="prevBtn" aria-label="Previous station">◀</button>
@@ -208,7 +214,39 @@
     <div class="rows" id="guideRows"></div>
     <footer>
       <p>Every program is streamed directly from the <a href="https://archive.org/details/oldtimeradio" target="_blank" rel="noopener">Internet Archive's Old Time Radio</a> collection, largely thanks to the volunteers of the Old Time Radio Researchers group. Each station follows the clock, so everyone listening hears the same show at the same moment. Many recordings are shared under Creative Commons non-commercial terms. Follow a program's link to see its source and license.</p>
+      <p class="footer-donate">♥ Every one of these recordings is kept free by the Internet Archive, a non-profit library. <a href="https://archive.org/donate" target="_blank" rel="noopener"><b>Please consider donating to the Internet Archive.</b></a></p>
     </footer>
+  </section>
+</div>
+
+<!-- ===== About ===== -->
+<div class="guide-back" id="about" hidden>
+  <section class="paper about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <button class="close" id="aboutClose" aria-label="Close About">✕</button>
+    <header>
+      <p class="kicker">About</p>
+      <h2 id="aboutTitle">YESTERDIAL</h2>
+      <p class="sub">Tune in to yesterday</p>
+    </header>
+    <div class="about-body">
+      <p>Yesterdial is a free, non-commercial radio for the golden age of broadcasting. Fifteen stations of old-time drama, comedy, mystery, science fiction, westerns and bedtime stories play on the clock, so everyone who tunes in hears the same show at the same moment.</p>
+
+      <h3>Every sound comes from the Internet Archive</h3>
+      <p>Yesterdial doesn't host any audio. Every program streams straight from the <a href="https://archive.org/details/oldtimeradio" target="_blank" rel="noopener">Internet Archive</a>, a non-profit digital library that preserves millions of recordings, books and web pages and shares them with everyone for free. Each program in the Program Guide has a "source" link back to its page on the Archive.</p>
+      <p class="donate-row"><a class="donate-btn" href="https://archive.org/donate" target="_blank" rel="noopener">♥ Donate to the Internet Archive</a></p>
+      <p class="small">If an evening with Yesterdial was a good one, please consider a gift to the Archive. It's what keeps these recordings available for everyone.</p>
+
+      <h3>With thanks to</h3>
+      <ul>
+        <li><b><a href="https://www.otrr.org" target="_blank" rel="noopener">The Old Time Radio Researchers</a></b>: the volunteers who track down, restore and catalog vintage radio shows. Most of the 1930s–50s programs here come from their collections on the Archive.</li>
+        <li><b><a href="https://librivox.org" target="_blank" rel="noopener">LibriVox</a></b>: the volunteers who record public-domain books aloud. The bedtime stories and <i>The Hound of the Baskervilles</i> are theirs.</li>
+        <li><b>The collectors and uploaders</b> who shared the rest (<i>The Shadow</i>, <i>CBS Radio Mystery Theater</i>, <i>Night Beat</i>, <i>Mindwebs</i>, the Ray Bradbury adaptations and many more), and the writers, actors and engineers who made the shows in the first place.</li>
+      </ul>
+
+      <h3>Good to know</h3>
+      <p class="small">Many older programs are in the public domain or shared under Creative Commons licenses. Some later ones (such as <i>CBS Radio Mystery Theater</i>, <i>Mindwebs</i>, <i>Nightfall</i> and <i>The Price of Fear</i>) may still be under copyright and appear here only because they are on the Archive. If you hold the rights to a program and would like it removed from Yesterdial, please <a href="https://github.com/pikemalltech/oldtime-radio/issues" target="_blank" rel="noopener">open an issue</a>.</p>
+      <p class="small">The code behind Yesterdial is open source under the MIT license, on <a href="https://github.com/pikemalltech/oldtime-radio" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
   </section>
 </div>
 
