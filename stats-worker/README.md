@@ -42,6 +42,11 @@ window.OTR_STATS = window.OTR_STATS || { url: 'wss://yesterdial-stats.YOUR-SUBDO
 
 then commit and push. Reload https://yesterdial.com and a "● N listening" chip appears in the corner.
 
+## Yesterdial's deployment
+
+Deployed as `yesterdial-stats` on Cloudflare, at `https://yesterdial-stats.round-butterfly-e9c6.workers.dev` (the WebSocket is `/ws`). `docs/stats-config.js` points the page at it.
+To redeploy after a change: `npx wrangler deploy` (it needs a Cloudflare API token with *Account → Workers Scripts → Edit*).
+
 ## Your dashboard
 
 `https://yesterdial-stats.YOUR-SUBDOMAIN.workers.dev/dashboard?key=YOUR_ADMIN_KEY` (bookmark it; `/stats.json?key=...` gives the same numbers as JSON).
