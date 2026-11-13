@@ -3,10 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Hearthside Hour — Old Time Radio</title>
-<meta name="description" content="Sit down by the radio and tune in to old-time radio stations — mystery, sci-fi, crime, comedy and more — streamed from the Internet Archive.">
+<title>Yesterdial: Tune In to Yesterday | Old-Time Radio</title>
+<meta name="description" content="Turn the dial on a 1940s radio: 15 stations of old-time mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, streamed from the Internet Archive.">
 <meta name="theme-color" content="#1a110b">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23201208'/%3E%3Crect x='8' y='18' width='48' height='30' rx='6' fill='%238a5129'/%3E%3Crect x='13' y='23' width='24' height='14' rx='3' fill='%23f2c46d'/%3E%3Ccircle cx='46' cy='30' r='5' fill='%231a0e07'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://pikemalltech.github.io/oldtime-radio/">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Yesterdial">
+<meta property="og:title" content="Yesterdial: tune in to yesterday">
+<meta property="og:description" content="Turn the dial on a 1940s radio: 15 stations of old-time mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, streamed from the Internet Archive.">
+<meta property="og:url" content="https://pikemalltech.github.io/oldtime-radio/">
+<meta property="og:image" content="https://pikemalltech.github.io/oldtime-radio/social.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A 1940s wooden radio with a glowing dial in a cosy living room, with the words Yesterdial on its brass plate.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Yesterdial: tune in to yesterday">
+<meta name="twitter:description" content="Turn the dial on a 1940s radio: 15 stations of old-time mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, streamed from the Internet Archive.">
+<meta name="twitter:image" content="https://pikemalltech.github.io/oldtime-radio/social.jpg">
+<meta name="twitter:image:alt" content="A 1940s wooden radio with a glowing dial in a cosy living room.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Yesterdial","alternateName":"Yesterdial: tune in to yesterday","url":"https://pikemalltech.github.io/oldtime-radio/","description":"Turn the dial on a 1940s radio: 15 stations of old-time mystery, The Shadow, Sherlock Holmes, sci-fi, comedy and bedtime stories. Free, streamed from the Internet Archive.","inLanguage":"en"}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
@@ -15,6 +36,8 @@
 <script src="seasons.js"></script>
 </head>
 <body class="off">
+<h1 class="sr">Yesterdial: tune in to yesterday</h1>
+<p class="sr">Yesterdial is a free, interactive 1940s radio. Turn the dial through 15 stations of old-time radio drama, comedy, mystery, science fiction, westerns, Sherlock Holmes, The Shadow and bedtime stories, all streamed from the Internet Archive.</p>
 
 <div id="stage" aria-label="A living room with a 1940s radio">
 
@@ -81,7 +104,7 @@
     <div class="radio" id="radio">
       <div class="cabinet"></div>
       <div class="inlay"></div>
-      <div class="brand">HEARTHSIDE<small>★ SUPERHETERODYNE ★</small></div>
+      <div class="brand">YESTERDIAL<small>TUNE IN TO YESTERDAY</small></div>
       <i class="pilot" id="pilot" title="Power lamp"></i>
 
       <div class="dial" id="dial" aria-label="Tuning dial">
@@ -187,7 +210,7 @@
   </section>
 </div>
 
-<noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;color:#eee">The radio needs JavaScript to play.</p></noscript>
+<noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;color:#eee;font:18px Georgia,serif">Yesterdial needs JavaScript to run its radio. Turn it on and tune in to yesterday.</p></noscript>
 <audio id="player" preload="none"></audio>
 <script src="channels.js"></script>
 <script src="app.js" defer></script>

@@ -1,7 +1,9 @@
-# The Hearthside Hour
+# Yesterdial
 
-A 1940s console radio, in a living room, that tunes into old-time radio stations streamed
-straight from the [Internet Archive](https://archive.org/details/oldtimeradio).
+**Tune in to yesterday.**
+
+Yesterdial is a 1940s console radio, in a living room, that tunes into old-time radio stations streamed
+straight from the [Internet Archive](https://archive.org/details/oldtimeradio). Live at https://pikemalltech.github.io/oldtime-radio/ (planned home: yesterdial.com).
 
 **Just double-click `docs/index.html`** (or serve `docs/` with any static server).
 
@@ -124,6 +126,18 @@ Always check each item's license.
 * Many OTRR files are licensed **CC BY-NC-ND**. The site only links and streams (no copies or edits), but keep it
   non-commercial and keep the per-programme "source" links. Check any series you add.
 * Fonts (Limelight, Old Standard TT, Special Elite) load from Google Fonts and degrade gracefully to serif.
+
+## Using your own domain (yesterdial.com)
+
+1. **Register the domain.** Don't change anything in the repo yet: adding a `CNAME` before the domain exists makes GitHub redirect the working
+   `github.io` address to a domain that doesn't resolve, so the site goes dark.
+2. **Add DNS records** at your registrar:
+   * four `A` records on the apex (`@`): `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   * (optional) four `AAAA` records on `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   * one `CNAME` record: host `www`, value `pikemalltech.github.io`
+3. **Switch the site over:** `node scripts/use-domain.mjs yesterdial.com`, then commit and push. This writes `docs/CNAME` and updates the canonical,
+   Open Graph and Twitter URLs in `docs/index.html`. (`node scripts/use-domain.mjs --github` undoes it.)
+4. In the repository's **Settings → Pages**, confirm the custom domain is `yesterdial.com`, wait for the DNS check to pass, then tick **Enforce HTTPS**.
 
 ## Publishing (GitHub Pages)
 

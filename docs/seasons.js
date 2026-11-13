@@ -5,10 +5,11 @@
 //   valentines · july4 · halloween · thanksgiving · christmas   (holiday windows, which win over the seasons)
 //   Friday the 13th gets the halloween decor.
 //
+// ?theme=classic shows the original, un-themed room (used for the share image).
 // This script runs in <head> so the right theme is set before the first paint. The CSS lives in seasons.css;
 // the strings of lights, bunting and foliage along the top of the wall are drawn here as SVG tiles.
 (function () {
-  const THEMES = ['spring', 'summer', 'autumn', 'winter', 'valentines', 'july4', 'halloween', 'thanksgiving', 'christmas'];
+  const THEMES = ['classic', 'spring', 'summer', 'autumn', 'winter', 'valentines', 'july4', 'halloween', 'thanksgiving', 'christmas'];
   const DAY = 864e5;
 
   function nthWeekday(year, month, weekday, n) {                 // e.g. 4th Thursday of November

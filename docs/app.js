@@ -1,4 +1,4 @@
-// The Hearthside Hour — a 1940s living-room radio that tunes into old-time radio
+// Yesterdial: tune in to yesterday. A 1940s living-room radio that tunes into old-time radio
 // stations streamed from the Internet Archive.
 //
 // How it works:
@@ -345,7 +345,7 @@ function refreshInfo() {
       lk.href = detailsURL(link); lk.target = '_blank'; lk.rel = 'noopener';
       hNow.append(lk);
     }
-    document.title = state.on && state.tuned !== null ? `${a.replace('★ ', '')} — The Hearthside Hour` : 'The Hearthside Hour — Old Time Radio';
+    document.title = state.on && state.tuned !== null ? `${a.replace('★ ', '')} — Yesterdial` : 'Yesterdial: Tune In to Yesterday | Old-Time Radio';
     $('#powerBtn').setAttribute('aria-pressed', state.on);
     knobPower.setAttribute('aria-pressed', state.on);
   }
@@ -369,7 +369,7 @@ function updateMediaSession() {
   if (!('mediaSession' in navigator) || state.tuned === null) return;
   const np = nowPlaying(state.tuned), ch = state.channels[state.tuned];
   try {
-    navigator.mediaSession.metadata = new MediaMetadata({ title: np.ep.t, artist: np.ep.s, album: `${ch.name} · The Hearthside Hour` });
+    navigator.mediaSession.metadata = new MediaMetadata({ title: np.ep.t, artist: np.ep.s, album: `${ch.name} · Yesterdial` });
   } catch { /* unsupported */ }
 }
 if ('mediaSession' in navigator) {
@@ -557,7 +557,7 @@ async function shareStation() {
   const url = location.href.split('#')[0] + '#' + ch.id;
   try {
     if (navigator.share && matchMedia('(pointer: coarse)').matches) {
-      await navigator.share({ title: `${ch.name} · The Hearthside Hour`, text: `Tune in to ${ch.name} (${ch.kc} kc)`, url });
+      await navigator.share({ title: `${ch.name} · Yesterdial`, text: `Tune in to ${ch.name} (${ch.kc} kc)`, url });
       return;
     }
   } catch (err) { if (err.name === 'AbortError') return; }
