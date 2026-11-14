@@ -87,6 +87,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
       <button data-mode="sbs" aria-pressed="false" title="Cardboard or phone headset: parallel view">Headset</button>
       <button data-mode="cross" aria-pressed="false" title="Cross your eyes: no equipment">Cross-eye</button>
     </div>
+    <div class="nudge" style="gap:6px"><span>Wiggle speed</span><button id="ws" aria-label="Wiggle speed">Fast</button></div>
     <div class="nudge" title="Shift the right-eye image if the picture feels off">
       Depth focus
       <button id="nl" aria-label="Move focus nearer">&minus;</button>
@@ -133,7 +134,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 'use strict';
 var reel=window.REELS[0], S=reel.scenes, N=S.length;
 var cv=document.getElementById('cv'), ctx=cv.getContext('2d'), stage=document.getElementById('stage');
-var mode='wiggle', idx=0, nudge=0, imgs=[], wigT=0, raf=0, ana=null, anaKey='';
+var wigMs=260, mode='wiggle', idx=0, nudge=0, imgs=[], wigT=0, raf=0, ana=null, anaKey='';
 var hash=parseInt((location.hash.match(/s=(\d+)/)||[])[1],10); if(hash>=1&&hash<=N) idx=hash-1;
 
 document.getElementById('sub').textContent=reel.title+' — '+reel.subtitle;
@@ -192,10 +193,10 @@ function draw(ts){
   if(!p.ok){ ctx.fillStyle='#d9a441'; ctx.font='20px serif'; ctx.fillText('Loading…',20,36); return; }
   var W=cv.width,H=cv.height, dx=nudgePx(p);
   if(mode==='wiggle'){
-    var rightFirst=Math.floor(ts/150)%2===1;
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,H); ctx.clip();
-    if(rightFirst) drawImg(p.R,0,0,W,H,dx); else drawImg(p.L,0,0,W,H,0);
-    ctx.restore();
+    // smooth ping-pong: ease between the two eyes instead of a hard cut
+    var a=.5-.5*Math.cos(ts/wigMs*2*Math.PI);
+    drawImg(p.L,0,0,W,H,0);
+    ctx.globalAlpha=a; drawImg(p.R,0,0,W,H,dx); ctx.globalAlpha=1;
   } else if(mode==='anaglyph'){
     var f=fit(p.L.naturalWidth,p.L.naturalHeight,W,H), key=idx+':'+W+'x'+H+':'+nudge;
     if(anaKey!==key||!ana){
@@ -231,6 +232,8 @@ function show(i,sound){
 }
 document.getElementById('next').onclick=function(){show(idx+1,true);};
 document.getElementById('prev').onclick=function(){show(idx-1,true);};
+var spd=[['Fast',260],['Faster',180],['Slow',400]],si=0;
+document.getElementById('ws').onclick=function(){si=(si+1)%spd.length;wigMs=spd[si][1];this.textContent=spd[si][0];};
 document.getElementById('nl').onclick=function(){nudge-=.25;ana=null;};
 document.getElementById('nr').onclick=function(){nudge+=.25;ana=null;};
 document.addEventListener('keydown',function(e){
