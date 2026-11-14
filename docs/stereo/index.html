@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stereo Reel | Yesterdial</title>
+<meta name="description" content="A virtual stereoscope: flip through a reel of 3D stereograph photographs of the American West from the Library of Congress. Wiggle, red/cyan, cardboard-headset and cross-eye modes.">
+<meta name="theme-color" content="#1a110b">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a110b;--wood:#3a2415;--wood2:#5a3820;--brass:#d9a441;--cream:#f1e4c3;--ink:#2a1a0e;--red:#b3402c}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--cream);font-family:'Old Standard TT',Georgia,serif}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:14px 16px 28px;
+  background:radial-gradient(ellipse at 50% 0,#3b2616 0,#1a110b 70%)}
+header{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:Limelight,serif;font-weight:400;color:var(--brass);margin:0;font-size:clamp(22px,4vw,34px);letter-spacing:.04em}
+header a{color:var(--cream);opacity:.8;font-size:14px}
+.sub{width:100%;max-width:980px;margin:2px 0 12px;font-style:italic;opacity:.75;font-size:15px}
+.viewer{width:100%;max-width:980px;background:linear-gradient(#4a2f1b,#2b1a0f);border:2px solid #6d4627;border-radius:18px;
+  padding:14px;box-shadow:0 20px 50px #000a, inset 0 2px 0 #7a5030}
+.stage{position:relative;background:#050302;border-radius:10px;border:3px solid #0008;overflow:hidden;
+  box-shadow:inset 0 0 40px #000;aspect-ratio:4/3;max-height:72vh;width:100%}
+canvas{display:block;width:100%;height:100%}
+.stage.fs{position:fixed;inset:0;z-index:20;max-height:none;border-radius:0;aspect-ratio:auto}
+.exit{display:none;position:absolute;top:10px;right:10px;z-index:3}
+.stage.fs .exit{display:block}
+.vignette{pointer-events:none;position:absolute;inset:0;box-shadow:inset 0 0 90px 30px #000c}
+.stage.fs .vignette,.stage.sbs .vignette{display:none}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:14px}
+.modes{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;cursor:pointer;color:var(--cream);background:#2a1a0e;border:1px solid #7a5030;border-radius:8px;padding:8px 12px;
+  font-family:'Special Elite',monospace;font-size:14px}
+button:hover{background:#3a2415}
+button[aria-pressed=true]{background:var(--brass);color:var(--ink);border-color:#f0c565}
+button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.lever{display:flex;align-items:center;gap:10px}
+.lever button.go{background:var(--red);border-color:#e0705a;padding:10px 18px;font-size:16px;box-shadow:0 3px 0 #6b2417}
+.lever button.go:active{transform:translateY(2px);box-shadow:0 1px 0 #6b2417}
+.nudge{display:flex;align-items:center;gap:6px;font-size:13px;opacity:.9;font-family:'Special Elite',monospace}
+.panel{display:grid;grid-template-columns:auto 1fr;gap:18px;margin-top:16px;align-items:center}
+.reel{position:relative;width:132px;height:132px;aspect-ratio:1;flex:none}
+.reel .disc{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#222 0 14%,#e8dcc0 15% 100%);
+  border:3px solid #111;transition:transform .55s cubic-bezier(.5,1.6,.4,1);box-shadow:0 6px 14px #000a}
+.reel .disc::after{content:'';position:absolute;inset:44%;border-radius:50%;background:#111}
+.reel .win{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px;border-radius:50%;background:#000;
+  border:2px solid #444;overflow:hidden}
+.reel .win img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.4)}
+.reel .tick{position:absolute;left:50%;top:-8px;margin-left:-6px;border:6px solid transparent;border-top:10px solid var(--brass)}
+.booklet{background:var(--cream);color:var(--ink);border-radius:6px;padding:14px 18px;box-shadow:0 4px 12px #0008;
+  background-image:repeating-linear-gradient(transparent 0 27px,#0000000a 27px 28px)}
+.booklet .n{font-family:'Special Elite',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7a5030}
+.booklet h2{font-family:Limelight,serif;font-weight:400;margin:2px 0 4px;font-size:clamp(18px,3vw,24px)}
+.booklet p{margin:2px 0;font-size:15px}
+.booklet a{color:#7a2d1c}
+.help{width:100%;max-width:980px;margin-top:18px;font-size:15px;line-height:1.5}
+.help h3{font-family:Limelight,serif;font-weight:400;color:var(--brass);margin:12px 0 4px}
+.help dt{font-family:'Special Elite',monospace;color:var(--brass);margin-top:8px}
+.help dd{margin:0 0 0 0;opacity:.9}
+.credits{width:100%;max-width:980px;margin-top:18px;font-size:13px;opacity:.7;line-height:1.5}
+.credits a{color:var(--cream)}
+.sr{position:absolute;left:-9999px}
+@media(max-width:560px){.panel{grid-template-columns:1fr;justify-items:center}.reel{width:112px;height:112px;min-height:112px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Stereo Reel</h1>
+  <a href="../">&larr; Back to the radio</a>
+</header>
+<p class="sub" id="sub">Loading the reel&hellip;</p>
+
+<main class="viewer">
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="Stereograph photograph" role="img"></canvas>
+    <div class="vignette"></div>
+    <button class="exit" id="exit">Exit full screen</button>
+  </div>
+
+  <div class="controls">
+    <div class="modes" role="group" aria-label="3D viewing mode">
+      <button data-mode="wiggle" aria-pressed="true" title="Quick back-and-forth; works with no glasses">Wiggle</button>
+      <button data-mode="anaglyph" aria-pressed="false" title="Red/cyan glasses">Red/Cyan</button>
+      <button data-mode="sbs" aria-pressed="false" title="Cardboard or phone headset: parallel view">Headset</button>
+      <button data-mode="cross" aria-pressed="false" title="Cross your eyes: no equipment">Cross-eye</button>
+    </div>
+    <div class="nudge" title="Shift the right-eye image if the picture feels off">
+      Depth focus
+      <button id="nl" aria-label="Move focus nearer">&minus;</button>
+      <button id="nr" aria-label="Move focus farther">+</button>
+    </div>
+    <div class="lever">
+      <button id="prev" aria-label="Previous scene">&larr;</button>
+      <button id="next" class="go">Advance &#9654;</button>
+      <button id="fs" title="Full screen" aria-label="Full screen">&#x26F6;</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="reel" aria-hidden="true"><div class="tick"></div><div class="disc" id="disc"></div></div>
+    <div class="booklet" aria-live="polite">
+      <div class="n" id="bn"></div>
+      <h2 id="bt"></h2>
+      <p id="bp"></p>
+      <p><a id="bl" target="_blank" rel="noopener">View the original card at the Library of Congress</a></p>
+    </div>
+  </div>
+</main>
+
+<section class="help">
+  <h3>How to look</h3>
+  <dl>
+    <dt>Wiggle</dt><dd>Nothing needed. The two photos swap quickly; your brain reads the shifting as depth.</dd>
+    <dt>Red/Cyan</dt><dd>Put on red-left, cyan-right paper glasses.</dd>
+    <dt>Headset</dt><dd>Use a Google Cardboard-style viewer or VR headset with your phone sideways, in full screen.</dd>
+    <dt>Cross-eye</dt><dd>Look at the pair and cross your eyes until three images appear; focus on the middle one. Depth may need a moment to settle.</dd>
+  </dl>
+  <p>Use the arrow keys or space bar to advance, and the Depth focus buttons if the scene looks strained.</p>
+</section>
+
+<p class="credits">
+  Photographs: <a href="https://www.loc.gov/pictures/collection/stereo/" target="_blank" rel="noopener">Stereograph Cards, Library of Congress Prints &amp; Photographs Division</a>.
+  The Library lists these cards as having no known restrictions on publication. Each card was cropped from its scan, its two halves aligned for height and convergence, and (when printed in reverse order) swapped.
+  Part of <a href="../">Yesterdial</a>, which also streams from the <a href="https://archive.org" target="_blank" rel="noopener">Internet Archive</a>.
+</p>
+
+<script src="reels.js"></script>
+<script>
+(function(){
+'use strict';
+var reel=window.REELS[0], S=reel.scenes, N=S.length;
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d'), stage=document.getElementById('stage');
+var mode='wiggle', idx=0, nudge=0, imgs=[], wigT=0, raf=0, ana=null, anaKey='';
+var hash=parseInt((location.hash.match(/s=(\d+)/)||[])[1],10); if(hash>=1&&hash<=N) idx=hash-1;
+
+document.getElementById('sub').textContent=reel.title+' — '+reel.subtitle;
+
+// reel disc with scene windows
+var disc=document.getElementById('disc');
+S.forEach(function(s,i){
+  var w=document.createElement('div'); w.className='win';
+  var a=i/N*2*Math.PI, r=46;
+  w.style.transform='translate('+(Math.sin(a)*r)+'px,'+(-Math.cos(a)*r)+'px)';
+  var im=document.createElement('img'); im.src='img/'+s.slug+'-L.jpg'; im.alt=''; im.loading='lazy';
+  w.appendChild(im); disc.appendChild(w);
+});
+
+// click sound
+var ac=null;
+function click(){
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    var t=ac.currentTime, o=ac.createOscillator(), g=ac.createGain();
+    o.type='square'; o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(50,t+.07);
+    g.gain.setValueAtTime(.25,t); g.gain.exponentialRampToValueAtTime(.001,t+.09);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.1);
+    var len=ac.sampleRate*.04, b=ac.createBuffer(1,len,ac.sampleRate), d=b.getChannelData(0);
+    for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
+    var n=ac.createBufferSource(), ng=ac.createGain(); ng.gain.value=.3; n.buffer=b; n.connect(ng).connect(ac.destination); n.start(t+.06);
+  }catch(e){}
+}
+
+function load(i){
+  if(imgs[i]) return imgs[i];
+  var p=imgs[i]={ok:false,L:new Image(),R:new Image()}, n=0;
+  function done(){ if(++n===2){ p.ok=true; if(i===idx){ana=null;} } }
+  p.L.onload=p.R.onload=done;
+  p.L.src='img/'+S[i].slug+'-L.jpg'; p.R.src='img/'+S[i].slug+'-R.jpg';
+  return p;
+}
+
+function fit(w,h,bw,bh){ var s=Math.min(bw/w,bh/h); return {w:w*s,h:h*s,s:s}; }
+function size(){
+  var r=stage.getBoundingClientRect(), d=Math.min(window.devicePixelRatio||1,2);
+  var W=Math.round(r.width*d), H=Math.round(r.height*d);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;ana=null;}
+}
+function drawImg(im,x,y,bw,bh,dx){
+  var f=fit(im.naturalWidth,im.naturalHeight,bw,bh);
+  ctx.drawImage(im,x+(bw-f.w)/2+dx*f.s,y+(bh-f.h)/2,f.w,f.h);
+  return f;
+}
+function nudgePx(p){ return nudge/100*p.L.naturalWidth; }
+
+function draw(ts){
+  raf=requestAnimationFrame(draw);
+  size();
+  var p=load(idx); ctx.fillStyle='#050302'; ctx.fillRect(0,0,cv.width,cv.height);
+  if(!p.ok){ ctx.fillStyle='#d9a441'; ctx.font='20px serif'; ctx.fillText('Loading…',20,36); return; }
+  var W=cv.width,H=cv.height, dx=nudgePx(p);
+  if(mode==='wiggle'){
+    var rightFirst=Math.floor(ts/150)%2===1;
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,H); ctx.clip();
+    if(rightFirst) drawImg(p.R,0,0,W,H,dx); else drawImg(p.L,0,0,W,H,0);
+    ctx.restore();
+  } else if(mode==='anaglyph'){
+    var f=fit(p.L.naturalWidth,p.L.naturalHeight,W,H), key=idx+':'+W+'x'+H+':'+nudge;
+    if(anaKey!==key||!ana){
+      var w=Math.round(f.w),h=Math.round(f.h), o=document.createElement('canvas'); o.width=w;o.height=h;
+      var c=o.getContext('2d',{willReadFrequently:true}); c.drawImage(p.L,0,0,w,h); var a=c.getImageData(0,0,w,h);
+      c.clearRect(0,0,w,h); c.drawImage(p.R,dx*f.s,0,w,h); var b=c.getImageData(0,0,w,h), d=a.data, e=b.data;
+      for(var i=0;i<d.length;i+=4){
+        var gl=.299*d[i]+.587*d[i+1]+.114*d[i+2], gr=.299*e[i]+.587*e[i+1]+.114*e[i+2];
+        d[i]=gl; d[i+1]=gr; d[i+2]=gr; d[i+3]=255;
+      }
+      c.putImageData(a,0,0); ana=o; anaKey=key;
+    }
+    ctx.drawImage(ana,(W-ana.width)/2,(H-ana.height)/2);
+  } else {
+    var gap=Math.round(W*.01), hw=(W-gap)/2, rev=mode==='cross';
+    var a1=rev?p.R:p.L, a2=rev?p.L:p.R;
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,hw,H); ctx.clip(); drawImg(a1,0,0,hw,H,rev?dx:0); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(hw+gap,0,hw,H); ctx.clip(); drawImg(a2,hw+gap,0,hw,H,rev?0:dx); ctx.restore();
+  }
+}
+
+function show(i,sound){
+  idx=(i+N)%N; nudge=0; ana=null;
+  load(idx); load((idx+1)%N);
+  var s=S[idx];
+  document.getElementById('bn').textContent='Scene '+(idx+1)+' of '+N;
+  document.getElementById('bt').textContent=s.title;
+  document.getElementById('bp').textContent=s.place+(s.date?' · '+s.date:'');
+  var l=document.getElementById('bl'); l.href=s.loc;
+  disc.style.transform='rotate('+(-idx*360/N)+'deg)';
+  try{history.replaceState(null,'','#s='+(idx+1));}catch(e){}
+  if(sound) click();
+}
+document.getElementById('next').onclick=function(){show(idx+1,true);};
+document.getElementById('prev').onclick=function(){show(idx-1,true);};
+document.getElementById('nl').onclick=function(){nudge-=.25;ana=null;};
+document.getElementById('nr').onclick=function(){nudge+=.25;ana=null;};
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){ if(document.activeElement.tagName==='BUTTON'&&e.key===' ') return; e.preventDefault(); show(idx+1,true); }
+  else if(e.key==='ArrowLeft'){ show(idx-1,true); }
+  else if(e.key==='Escape'&&stage.classList.contains('fs')) setFs(false);
+});
+
+var modeBtns=[].slice.call(document.querySelectorAll('[data-mode]'));
+function setMode(m){
+  mode=m; ana=null;
+  modeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===m));});
+  stage.classList.toggle('sbs',m==='sbs'||m==='cross');
+  if(m==='sbs'||m==='cross') stage.style.aspectRatio='2/1'; else stage.style.aspectRatio='';
+  if(m==='sbs') setFs(true);
+}
+modeBtns.forEach(function(b){b.onclick=function(){setMode(b.dataset.mode);};});
+
+function setFs(on){
+  stage.classList.toggle('fs',on);
+  if(on){ try{ (stage.requestFullscreen||stage.webkitRequestFullscreen||function(){}).call(stage); }catch(e){} }
+  else if(document.fullscreenElement){ try{document.exitFullscreen();}catch(e){} }
+}
+document.getElementById('fs').onclick=function(){setFs(!stage.classList.contains('fs'));};
+document.getElementById('exit').onclick=function(){setFs(false);};
+document.addEventListener('fullscreenchange',function(){ if(!document.fullscreenElement) stage.classList.remove('fs'); });
+stage.addEventListener('click',function(){ if(!stage.classList.contains('fs')) return; });
+
+window.__stereo={show:show,setMode:setMode,get idx(){return idx;},get mode(){return mode;}};
+show(idx,false); raf=requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

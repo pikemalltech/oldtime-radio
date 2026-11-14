@@ -155,6 +155,12 @@ Any push to `main` then republishes it. Opening `docs/index.html` straight from 
 the control bar and a corner chip) and keeps simple anonymous visit stats on a private dashboard. It is switched off until `docs/stats-config.js` has a URL.
 See `stats-worker/README.md` for what it stores (no cookies, no personal data) and how to deploy it.
 
+## Stereo Reel (prototype)
+
+`docs/stereo/` is a one-reel virtual stereoscope (live at `/stereo/`, not yet linked from the radio). Seven stereograph cards of the American West from the
+Library of Congress, each split into left/right photos, aligned for height and convergence, and viewable as wiggle, red/cyan, headset (side-by-side) or cross-eye.
+Scenes live in `docs/stereo/reels.json` (mirrored in `reels.js`), images in `docs/stereo/img/`. All cards are listed by the Library as "No known restrictions on publication."
+
 ## A note on rights
 
 The older shows (1930s–50s) are mostly public domain or shared under Creative Commons. Some later ones on the dial are almost
