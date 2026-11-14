@@ -30,7 +30,7 @@ const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAE
 const state = {
   channels: [], sp: [],
   on: false, p: 0, target: 0, vol: 0.7,
-  warm: 0, dragging: false, speed: 0,
+  warm: 0, dragging: false, speed: 0, lock: 0,
   selected: null,          // station index we are (about to be) playing
   loaded: null,            // { ch, idx } what the <audio> element holds
   tuned: null,             // station index with a clear signal
@@ -279,7 +279,7 @@ function buildDial() {
 // ---------------------------------------------------------------- audio effects (WebAudio)
 // The programme itself plays through the <audio> element (cross-origin safe);
 // static, whistle, hum and clicks are synthesized here.
-let ctx = null, noiseBuf = null, noiseGain, whistleOsc, whistleGain, humGain;
+let ctx = null, noiseBuf = null, noiseGain, crackleGain, whistleOsc, whistleGain, humGain;
 function ensureAudio() {
   if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
   const AC = window.AudioContext || window.webkitAudioContext;
@@ -293,10 +293,20 @@ function ensureAudio() {
     b = 0.55 * b + 0.45 * (Math.random() * 2 - 1);
     d[i] = b * 1.5 + (Math.random() < 0.0007 ? (Math.random() * 2 - 1) * 1.6 : 0);   // occasional crackle
   }
-  const src = ctx.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+  // The static is two layers on their own gains (through one band-pass): a steady hiss and sparse crackle pops.
+  // While tuning you hear both; a locked station keeps only a faint whisper of hiss and no crackle (see frame()).
   const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2100; bp.Q.value = 0.35;
-  noiseGain = ctx.createGain(); noiseGain.gain.value = 0;
-  src.connect(bp); bp.connect(noiseGain); noiseGain.connect(ctx.destination); src.start();
+  const layer = (seconds, fill) => {
+    const buf = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
+    fill(buf.getChannelData(0));
+    const s = ctx.createBufferSource(); s.buffer = buf; s.loop = true;
+    const g = ctx.createGain(); g.gain.value = 0;
+    s.connect(g); g.connect(bp); s.start();
+    return g;
+  };
+  noiseGain = layer(3, (h) => { let x = 0; for (let i = 0; i < h.length; i++) { x = 0.55 * x + 0.45 * (Math.random() * 2 - 1); h[i] = x * 1.5; } });
+  crackleGain = layer(5, (c) => { for (let i = 0; i < c.length; i++) c[i] = Math.random() < 0.0007 ? (Math.random() * 2 - 1) * 1.6 : 0; });
+  bp.connect(ctx.destination);
 
   whistleOsc = ctx.createOscillator(); whistleOsc.type = 'sine'; whistleOsc.frequency.value = 800;
   whistleGain = ctx.createGain(); whistleGain.gain.value = 0;
@@ -945,6 +955,7 @@ function frame(t) {
   const sg = signalAt(state.p);
   const sig = state.on ? sg.sig : 0;
   const tuned = state.on && sg.d <= LOCK * 1.4 ? sg.i : null;
+  state.lock += ((tuned !== null ? 1 : 0) - state.lock) * (1 - Math.exp(-dt * (tuned !== null ? 5 : 12)));   // settles in ~0.4 s, lets go faster
   if (tuned !== state.tuned) { state.tuned = tuned; stats.setListening(tuned !== null ? state.channels[tuned].id : null); refreshInfo(); if (tuned !== null) { blip(0.25, 0.04, 700); updateMediaSession(); try { history.replaceState(null, '', '#' + state.channels[tuned].id); } catch { /* file:// or sandbox */ } } }
   syncSelection();
 
@@ -952,9 +963,13 @@ function frame(t) {
   const master = Math.pow(state.vol, 1.6) * state.warm * fade;
   player.volume = clamp(master * sig, 0, 1);
   if (ctx) {
-    const staticLevel = master * ((1 - sig) * 0.5 + 0.02 * sig) * (0.75 + Math.random() * 0.25);
-    setGain(noiseGain, state.on ? staticLevel : 0);
-    setGain(humGain, state.on ? master * 0.012 : 0);
+    // Static while tuning is unchanged. Once a station is locked the receiver settles ("lock" eases to 1): the crackle
+    // goes away entirely and the hiss drops to a faint whisper. Tuning away brings it straight back.
+    const jitter = 0.75 + Math.random() * 0.25;
+    const tuning = (1 - sig) * 0.5;
+    setGain(noiseGain, state.on ? master * (tuning * (1 - 0.85 * state.lock) + 0.004 * sig) * jitter : 0);
+    setGain(crackleGain, state.on ? master * tuning * (1 - state.lock) * jitter : 0);
+    setGain(humGain, state.on ? master * 0.006 : 0);
     const whistle = state.on && sig < 0.98 && sg.d < FADE * 1.6 ? clamp(state.speed * 4, 0, 1) * 0.05 * master : 0;
     setGain(whistleGain, whistle);
     whistleOsc.frequency.setTargetAtTime(160 + sg.d * 36000, ctx.currentTime, 0.03);
@@ -1007,6 +1022,6 @@ async function boot() {
   requestAnimationFrame(frame);
   const tourParam = new URLSearchParams(location.search).get('tour');
   if (tourParam === '1' || (tourParam !== '0' && !store.get('welcomed', false))) setTimeout(() => openTour(0), 800);
-  window.__otr = { state, openTour, goTo, powerOn, powerOff, nowPlaying, scheduleAt, signalAt, windowsFor, cycleSleep };   // handy for debugging in the console
+  window.__otr = { audioLevels: () => ({ noise: noiseGain ? noiseGain.gain.value : null, crackle: crackleGain ? crackleGain.gain.value : null, hum: humGain ? humGain.gain.value : null, program: player.volume, lock: state.lock }), state, openTour, goTo, powerOn, powerOff, nowPlaying, scheduleAt, signalAt, windowsFor, cycleSleep };   // handy for debugging in the console
 }
 boot();
